@@ -89,18 +89,24 @@ export default function TickerTable() {
   useEffect(() => {
     if (query.isSuccess) {
       setRows((prev) => [...prev, query.data]);
-      storeList("tickerList", [...rows, query.data].map(row => JSON.stringify(row)));
+      storeList(
+        "tickerList",
+        [...rows, query.data].map((row) => JSON.stringify(row))
+      );
     }
   }, [query.isSuccess, query.data]);
 
   const handleDeleteRow = (index: number) => {
     setRows(rows.filter((_, i) => i !== index));
-    storeList("tickerList", rows.filter((_, i) => i !== index).map(row => JSON.stringify(row)));
-  }
+    storeList(
+      "tickerList",
+      rows.filter((_, i) => i !== index).map((row) => JSON.stringify(row))
+    );
+  };
 
   useEffect(() => {
     const storedList = retrieveList("tickerList");
-    setRows(storedList.map(row => JSON.parse(row)));
+    setRows(storedList.map((row) => JSON.parse(row)));
   }, []);
 
   return (
@@ -187,19 +193,19 @@ export default function TickerTable() {
             </TableHead>
             <TableBody>
               {rows.map((row, index) => {
-                const peColor = columnScales.peScale(row.trailingPE);
-                const pegColor = columnScales.pegScale(row.trailingPegRatio);
-                const priceToSalesColor = columnScales.priceToSalesScale(
+                const peColors = columnScales.peScale(row.trailingPE);
+                const pegColors = columnScales.pegScale(row.trailingPegRatio);
+                const priceToSalesColors = columnScales.priceToSalesScale(
                   row.priceToSalesTrailing12Months
                 );
-                const priceToBookColor = columnScales.priceToBookScale(row.priceToBook);
-                const dividendYieldColor = columnScales.dividendYieldScale(
+                const priceToBookColors = columnScales.priceToBookScale(row.priceToBook);
+                const dividendYieldColors = columnScales.dividendYieldScale(
                   row.trailingAnnualDividendYield
                 );
-                const payoutRatioColor = columnScales.payoutRatioScale(row.payoutRatio);
-                const debtToEquityColor = columnScales.debtToEquityScale(row.debtToEquity);
-                const currentRatioColor = columnScales.currentRatioScale(row.currentRatio);
-                const betaColor = columnScales.betaScale(row.beta);
+                const payoutRatioColors = columnScales.payoutRatioScale(row.payoutRatio);
+                const debtToEquityColors = columnScales.debtToEquityScale(row.debtToEquity);
+                const currentRatioColors = columnScales.currentRatioScale(row.currentRatio);
+                const betaColors = columnScales.betaScale(row.beta);
 
                 return (
                   <TableRow key={index}>
@@ -209,71 +215,75 @@ export default function TickerTable() {
                     <TableCell align="right">{row.currentPrice}</TableCell>
                     <TableCell
                       align="right"
-                      sx={{ background: peColor, border: `1px solid ${peColor}` }}>
+                      sx={{
+                        background: peColors.interpolatedColor,
+                        border: `2px solid ${peColors.basicColor}`,
+                      }}>
                       {row.trailingPE}
                     </TableCell>
                     <TableCell
                       align="right"
-                      sx={{ background: pegColor, border: `1px solid ${pegColor}` }}>
+                      sx={{
+                        background: pegColors.interpolatedColor,
+                        border: `2px solid ${pegColors.basicColor}`,
+                      }}>
                       {row.trailingPegRatio}
                     </TableCell>
                     <TableCell
                       align="right"
                       sx={{
-                        background: priceToSalesColor,
-                        border: `1px solid ${priceToSalesColor}`,
+                        background: priceToSalesColors.interpolatedColor,
+                        border: `2px solid ${priceToSalesColors.basicColor}`,
                       }}>
                       {row.priceToSalesTrailing12Months}
                     </TableCell>
                     <TableCell
                       align="right"
                       sx={{
-                        background: priceToBookColor,
-                        border: `1px solid ${priceToBookColor}`,
+                        background: priceToBookColors.interpolatedColor,
+                        border: `2px solid ${priceToBookColors.basicColor}`,
                       }}>
                       {row.priceToBook}
                     </TableCell>
                     <TableCell
                       align="right"
                       sx={{
-                        background: dividendYieldColor,
-                        border: `1px solid ${dividendYieldColor}`,
+                        background: dividendYieldColors.interpolatedColor,
+                        border: `2px solid ${dividendYieldColors.basicColor}`,
                       }}>
                       {row.trailingAnnualDividendYield}
                     </TableCell>
                     <TableCell
                       align="right"
                       sx={{
-                        background: payoutRatioColor,
-                        border: `1px solid ${payoutRatioColor}`,
+                        background: payoutRatioColors.interpolatedColor,
+                        border: `2px solid ${payoutRatioColors.basicColor}`,
                       }}>
                       {row.payoutRatio}
                     </TableCell>
                     <TableCell
                       align="right"
                       sx={{
-                        background: debtToEquityColor,
-                        border: `1px solid ${debtToEquityColor}`,
+                        background: debtToEquityColors.basicColor,
+                        border: `2px solid ${debtToEquityColors.interpolatedColor}`,
                       }}>
                       {row.debtToEquity}
                     </TableCell>
                     <TableCell
                       align="right"
                       sx={{
-                        background: currentRatioColor,
-                        border: `1px solid ${currentRatioColor}`,
+                        background: currentRatioColors.basicColor,
+                        border: `2px solid ${currentRatioColors.interpolatedColor}`,
                       }}>
                       {row.currentRatio}
                     </TableCell>
                     <TableCell
                       align="right"
-                      sx={{ background: betaColor, border: `1px solid ${betaColor}` }}>
+                      sx={{ background: betaColors.interpolatedColor, border: `2px solid ${betaColors.basicColor}` }}>
                       {row.beta}
                     </TableCell>
                     <TableCell align="right">
-                      <IconButton
-                        color="error"
-                        onClick={() => handleDeleteRow(index)}>
+                      <IconButton color="error" onClick={() => handleDeleteRow(index)}>
                         <CloseIcon />
                       </IconButton>
                     </TableCell>
