@@ -21,6 +21,8 @@ import axios from "axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as columnScales from "../../utils/scales";
 
+import { storeList, retrieveList } from "../../utils/store";
+
 /**
  * The main component of the application that fetches and displays financial data in a table format.
  *
@@ -74,20 +76,32 @@ export default function TickerTable() {
       return response.data;
     },
     retry: false,
+    enabled: false,
   });
 
   const handleSubmitTicker = (event: React.KeyboardEvent) => {
     if (event.key !== "Enter") return;
     queryClient.invalidateQueries({ queryKey: ["tickerData"] });
+    query.refetch();
     setTickerSymbol("");
   };
 
   useEffect(() => {
     if (query.isSuccess) {
-      console.log(query.data);
       setRows((prev) => [...prev, query.data]);
+      storeList("tickerList", [...rows, query.data].map(row => JSON.stringify(row)));
     }
   }, [query.isSuccess, query.data]);
+
+  const handleDeleteRow = (index: number) => {
+    setRows(rows.filter((_, i) => i !== index));
+    storeList("tickerList", rows.filter((_, i) => i !== index).map(row => JSON.stringify(row)));
+  }
+
+  useEffect(() => {
+    const storedList = retrieveList("tickerList");
+    setRows(storedList.map(row => JSON.parse(row)));
+  }, []);
 
   return (
     <Box
@@ -110,7 +124,6 @@ export default function TickerTable() {
           onKeyDown={handleSubmitTicker}
           sx={{ overflow: "hidden" }}
         />
-        <TextField variant="outlined" label="" />
       </Stack>
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer sx={{ maxHeight: 440 }}>
@@ -183,7 +196,6 @@ export default function TickerTable() {
                 const dividendYieldColor = columnScales.dividendYieldScale(
                   row.trailingAnnualDividendYield
                 );
-                console.log(dividendYieldColor);
                 const payoutRatioColor = columnScales.payoutRatioScale(row.payoutRatio);
                 const debtToEquityColor = columnScales.debtToEquityScale(row.debtToEquity);
                 const currentRatioColor = columnScales.currentRatioScale(row.currentRatio);
@@ -261,9 +273,7 @@ export default function TickerTable() {
                     <TableCell align="right">
                       <IconButton
                         color="error"
-                        onClick={() => {
-                          setRows(rows.filter((_, i) => i !== index));
-                        }}>
+                        onClick={() => handleDeleteRow(index)}>
                         <CloseIcon />
                       </IconButton>
                     </TableCell>
