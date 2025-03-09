@@ -1,181 +1,144 @@
+import { alpha } from '@mui/material/styles';
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
+const green = "#00FF00";
+const yellow = "#FFFF00";
+const red = "#FF0000";
+
+function interpolateColor(value: number, min: number, max: number, color: string): string {
+  const ratio = Math.max(0.5, Math.min(1, (value - min) / (max - min)));
+  return alpha(color, ratio);
+}
+
 function peScale(pe: number): string {
   if (pe < 15) {
-    return "green";
+    return green;
   } else if (pe < 25) {
-    return "yellow";
+    return interpolateColor(pe, 15, 25, yellow);
   } else {
-    return "red";
+    return interpolateColor(pe, 25, 35, red);
   }
 }
 
-/**
- * PEG < 1 is considered excellent
- * PEG < 2 is considered good
- */
 function pegScale(peg: number): string {
   if (peg < 1) {
-    return "green";
+    return green;
   } else if (peg < 2) {
-    return "yellow";
+    return interpolateColor(peg, 1, 2, yellow);
   } else {
-    return "red";
+    return interpolateColor(peg, 2, 3, red);
   }
 }
 
-/**
- * P/S < 1 is considered excellent
- * P/S 1.0 - 2.0 is considered good
- * P/S > 2 is considered poor
- */
 function priceToSalesScale(priceToSales: number): string {
   if (priceToSales < 1) {
-    return "green";
+    return green;
   } else if (priceToSales < 2) {
-    return "yellow";
+    return interpolateColor(priceToSales, 1, 2, yellow);
   } else {
-    return "red";
+    return interpolateColor(priceToSales, 2, 3, red);
   }
 }
 
-/**
- * P/B < 1 is considered excellent
- * P/B 1.0 - 3.0 is considered good
- * P/B > 3.0 is considered poor
- */
 function priceToBookScale(priceToBook: number): string {
   if (priceToBook < 1) {
-    return "green";
+    return green;
   } else if (priceToBook < 2) {
-    return "yellow";
+    return interpolateColor(priceToBook, 1, 2, yellow);
   } else {
-    return "red";
+    return interpolateColor(priceToBook, 2, 3, red);
   }
 }
 
 function dividendYieldScale(dividendYield: number): string {
   if (dividendYield > 4) {
-    return "green";
+    return green;
   } else if (dividendYield > 2) {
-    return "yellow";
+    console.log(interpolateColor(dividendYield, 2, 4, yellow));
+    return interpolateColor(dividendYield, 2, 4, yellow);
   } else {
-    return "red";
+    return interpolateColor(dividendYield, 0, 2, red);
   }
 }
 
-/**
- * Lower payout ratio is better
- * Payout ratio < 50% is considered excellent
- * Payout ratio 50% - 60% is considered good
- * Payout ratio 60% - 70% is considered ok
- * Beware of high payout ratios, as they may not be sustainable
- *
- */
 function payoutRatioScale(payoutRatio: number): string {
   if (payoutRatio < 40) {
-    return "green";
+    return green;
   } else if (payoutRatio < 60) {
-    return "yellow";
+    return interpolateColor(payoutRatio, 40, 60, yellow);
   } else {
-    return "red";
+    return interpolateColor(payoutRatio, 60, 80, red);
   }
 }
- 
-/**
- * Lower debt to equity is better
- * Debt to equity <= 1 is considered excellent: no debt
- * Debt to equity 1 - 2 is considered good
- * Debt to equity > 2 is considered poor/risky
- */
+
 function debtToEquityScale(debtToEquity: number): string {
   if (debtToEquity <= 1) {
-    return "green";
+    return green;
   } else if (debtToEquity < 2) {
-    return "yellow";
+    return interpolateColor(debtToEquity, 1, 2, yellow);
   } else {
-    return "red";
+    return interpolateColor(debtToEquity, 2, 3, red);
   }
 }
 
 function currentRatioScale(currentRatio: number): string {
   if (currentRatio > 2) {
-    return "green";
+    return green;
   } else if (currentRatio > 1) {
-    return "yellow";
+    return interpolateColor(currentRatio, 1, 2, yellow);
   } else {
-    return "red";
+    return interpolateColor(currentRatio, 0, 1, red,);
   }
 }
 
 function betaScale(beta: number): string {
   if (beta < 1) {
-    return "green";
+    return green;
   } else if (beta < 2) {
-    return "yellow";
+    return interpolateColor(beta, 1, 2, yellow);
   } else {
-    return "red";
+    return interpolateColor(beta, 2, 3, red);
   }
 }
 
-/**
- * Higher ROE is better
- * ROE > 20% is considered excellent
- * ROE 10% - 20% is considered good
- * ROE < 10% is considered poor
- */
 function roeScale(roe: number): string {
   if (roe > 20) {
-    return "green";
+    return green;
   } else if (roe > 10) {
-    return "yellow";
+    return interpolateColor(roe, 10, 20, yellow);
   } else {
-    return "red";
+    return interpolateColor(roe, 0, 10, red);
   }
 }
 
-/**
- * Higher ROA is better
- * ROA > 10% is considered excellent
- * ROA 5% - 10% is considered good
- * ROA < 5% is considered poor
- */
 function roaScale(roa: number): string {
   if (roa > 10) {
-    return "green";
+    return green;
   } else if (roa > 5) {
-    return "yellow";
+    return interpolateColor(roa, 5, 10, yellow);
   } else {
-    return "red";
+    return interpolateColor(roa, 0, 5, red);
   }
 }
 
-/**
- * Lower EV/Revenue is better
- * EV/Revenue < 1 is considered excellent
- * EV/Revenue 1.0 - 3.0 is considered good
- */
-function evToRevenueScale(evToRevenue: number) {
+function evToRevenueScale(evToRevenue: number): string {
   if (evToRevenue < 1) {
-    return "green";
+    return green;
   } else if (evToRevenue < 3) {
-    return "yellow";
+    return interpolateColor(evToRevenue, 1, 3, yellow);
   } else {
-    return "red";
+    return interpolateColor(evToRevenue, 3, 5, red);
   }
 }
 
-/**
- * Lower EV/EBITDA is better
- * EV/EBITDA < 8.0 is considered excellent
- * EV/EBITDA < 10 is considered good
- */
-function evToEbitdaScale(evToEbitda: number) {
-  if (evToEbitda < 10) {
-    return "green";
-  } else if (evToEbitda < 20) {
-    return "yellow";
+function evToEbitdaScale(evToEbitda: number): string {
+  if (evToEbitda < 8) {
+    return green;
+  } else if (evToEbitda < 10) {
+    return interpolateColor(evToEbitda, 8, 10, yellow);
   } else {
-    return "red";
+    return interpolateColor(evToEbitda, 10, 12, red);
   }
 }
 
@@ -191,4 +154,6 @@ export {
   betaScale,
   roeScale,
   roaScale,
+  evToRevenueScale,
+  evToEbitdaScale,
 };
