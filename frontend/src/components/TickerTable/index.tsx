@@ -11,6 +11,7 @@ import {
   Box,
   Stack,
   IconButton,
+  Badge,
 } from "@mui/material";
 
 import { Close as CloseIcon } from "@mui/icons-material";
@@ -22,6 +23,102 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as columnScales from "../../utils/scales";
 
 import { storeList, retrieveList } from "../../utils/store";
+
+const headerData = [
+  { tooltip: "The current trading price of the stock", headerTitle: "Current Price" },
+  {
+    tooltip:
+      "Price-to-Earnings ratio, a valuation metric for determining the relative value of a company's shares",
+    headerTitle: "P/E",
+  },
+  {
+    tooltip:
+      "Price/Earnings to Growth ratio, used to determine a stock's value while taking the company's earnings growth into account",
+    headerTitle: "PEG",
+  },
+  {
+    tooltip:
+      "Price-to-Sales ratio, a valuation ratio that compares a company's stock price to its revenues",
+    headerTitle: "P/S",
+  },
+  {
+    tooltip: "Price-to-Book ratio, used to compare a firm's market value to its book value",
+    headerTitle: "P/B",
+  },
+  {
+    tooltip:
+      "Dividend yield, a financial ratio that shows how much a company pays out in dividends each year relative to its stock price",
+    headerTitle: "Dividend Yield",
+  },
+  {
+    tooltip: "Payout ratio, the proportion of earnings paid out as dividends to shareholders",
+    headerTitle: "Payout Ratio",
+  },
+  {
+    tooltip:
+      "Debt-to-Equity ratio, a measure of a company's financial leverage calculated by dividing its total liabilities by stockholders' equity",
+    headerTitle: "Debt/Equity",
+  },
+  {
+    tooltip:
+      "Current ratio, a liquidity ratio that measures a company's ability to pay short-term obligations",
+    headerTitle: "Current Ratio",
+  },
+  {
+    tooltip: "Beta, a measure of a stock's volatility in relation to the overall market",
+    headerTitle: "Beta",
+  },
+];
+
+interface HeaderData {
+  tooltip: string;
+  headerTitle: string;
+}
+
+function HeaderCell({ tooltip, headerTitle }: HeaderData) {
+  return (
+    <Tooltip title={tooltip} placement="bottom">
+      <TableCell align="right">{headerTitle}</TableCell>
+    </Tooltip>
+  );
+}
+
+function ColorCodedCell({
+  value,
+  colors,
+}: {
+  value: number;
+  colors: { interpolatedColor: string; basicColor: string };
+}) {
+  return (
+    <TableCell
+      align="right"
+      sx={{
+        padding: "10px",
+      }}>
+      <Badge
+        badgeContent={" "}
+        color={
+          colors.basicColor == "#00FF00"
+            ? "success"
+            : colors.basicColor == "#FFFF00"
+            ? "warning"
+            : "error"
+        }>
+        <Box
+          sx={{
+            background: colors.interpolatedColor,
+            padding: "5px",
+            width: 1,
+            height: 1,
+            border: `2px solid black`,
+          }}>
+          {value}
+        </Box>
+      </Badge>
+    </TableCell>
+  );
+}
 
 /**
  * The main component of the application that fetches and displays financial data in a table format.
@@ -140,55 +237,9 @@ export default function TickerTable() {
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
-                <Tooltip title="The current trading price of the stock" placement="bottom">
-                  <TableCell align="right">Current Price</TableCell>
-                </Tooltip>
-                <Tooltip
-                  title="Price-to-Earnings ratio, a valuation metric for determining the relative value of a company's shares"
-                  placement="bottom">
-                  <TableCell align="right">P/E</TableCell>
-                </Tooltip>
-                <Tooltip
-                  title="Price/Earnings to Growth ratio, used to determine a stock's value while taking the company's earnings growth into account"
-                  placement="bottom">
-                  <TableCell align="right">PEG</TableCell>
-                </Tooltip>
-                <Tooltip
-                  title="Price-to-Sales ratio, a valuation ratio that compares a company's stock price to its revenues"
-                  placement="bottom">
-                  <TableCell align="right">P/S</TableCell>
-                </Tooltip>
-                <Tooltip
-                  title="Price-to-Book ratio, used to compare a firm's market value to its book value"
-                  placement="bottom">
-                  <TableCell align="right">P/B</TableCell>
-                </Tooltip>
-                <Tooltip
-                  title="Dividend yield, a financial ratio that shows how much a company pays out in dividends each year relative to its stock price"
-                  placement="bottom">
-                  <TableCell align="right">Dividend Yield</TableCell>
-                </Tooltip>
-                <Tooltip
-                  title="Payout ratio, the proportion of earnings paid out as dividends to shareholders"
-                  placement="bottom">
-                  <TableCell align="right">Payout Ratio</TableCell>
-                </Tooltip>
-                <Tooltip
-                  title="Debt-to-Equity ratio, a measure of a company's financial leverage calculated by dividing its total liabilities by stockholders' equity"
-                  placement="bottom">
-                  <TableCell align="right">Debt/Equity</TableCell>
-                </Tooltip>
-                <Tooltip
-                  title="Current ratio, a liquidity ratio that measures a company's ability to pay short-term obligations"
-                  placement="bottom">
-                  <TableCell align="right">Current Ratio</TableCell>
-                </Tooltip>
-                <Tooltip
-                  title="Beta, a measure of a stock's volatility in relation to the overall market"
-                  placement="bottom">
-                  <TableCell align="right">Beta</TableCell>
-                </Tooltip>
-                <TableCell align="right">Actions</TableCell>
+                {headerData.map((data, index) => (
+                  <HeaderCell key={index} headerTitle={data.headerTitle} tooltip={data.tooltip} />
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -213,75 +264,15 @@ export default function TickerTable() {
                       {row.shortName}
                     </TableCell>
                     <TableCell align="right">{row.currentPrice}</TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{
-                        background: peColors.interpolatedColor,
-                        border: `2px solid ${peColors.basicColor}`,
-                      }}>
-                      {row.trailingPE}
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{
-                        background: pegColors.interpolatedColor,
-                        border: `2px solid ${pegColors.basicColor}`,
-                      }}>
-                      {row.trailingPegRatio}
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{
-                        background: priceToSalesColors.interpolatedColor,
-                        border: `2px solid ${priceToSalesColors.basicColor}`,
-                      }}>
-                      {row.priceToSalesTrailing12Months}
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{
-                        background: priceToBookColors.interpolatedColor,
-                        border: `2px solid ${priceToBookColors.basicColor}`,
-                      }}>
-                      {row.priceToBook}
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{
-                        background: dividendYieldColors.interpolatedColor,
-                        border: `2px solid ${dividendYieldColors.basicColor}`,
-                      }}>
-                      {row.trailingAnnualDividendYield}
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{
-                        background: payoutRatioColors.interpolatedColor,
-                        border: `2px solid ${payoutRatioColors.basicColor}`,
-                      }}>
-                      {row.payoutRatio}
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{
-                        background: debtToEquityColors.basicColor,
-                        border: `2px solid ${debtToEquityColors.interpolatedColor}`,
-                      }}>
-                      {row.debtToEquity}
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{
-                        background: currentRatioColors.basicColor,
-                        border: `2px solid ${currentRatioColors.interpolatedColor}`,
-                      }}>
-                      {row.currentRatio}
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{ background: betaColors.interpolatedColor, border: `2px solid ${betaColors.basicColor}` }}>
-                      {row.beta}
-                    </TableCell>
+                    <ColorCodedCell value={row.trailingPE} colors={peColors} />
+                    <ColorCodedCell value={row.trailingPegRatio} colors={pegColors} />
+                    <ColorCodedCell value={row.priceToSalesTrailing12Months} colors={priceToSalesColors} />
+                    <ColorCodedCell value={row.priceToBook} colors={priceToBookColors} />
+                    <ColorCodedCell value={row.trailingAnnualDividendYield} colors={dividendYieldColors} />
+                    <ColorCodedCell value={row.payoutRatio} colors={payoutRatioColors} />
+                    <ColorCodedCell value={row.debtToEquity} colors={debtToEquityColors} />
+                    <ColorCodedCell value={row.currentRatio} colors={currentRatioColors} />
+                    <ColorCodedCell value={row.beta} colors={betaColors} />
                     <TableCell align="right">
                       <IconButton color="error" onClick={() => handleDeleteRow(index)}>
                         <CloseIcon />
