@@ -10,7 +10,6 @@ import {
   Box,
   Stack,
   IconButton,
-  Badge,
   Typography,
   Popover,
 } from "@mui/material";
@@ -172,26 +171,15 @@ function ColorCodedCell({
       sx={{
         padding: "10px",
       }}>
-      <Badge
-        badgeContent={" "}
-        color={
-          colors.basicColor == "#00FF00"
-            ? "success"
-            : colors.basicColor == "#FFFF00"
-            ? "warning"
-            : "error"
-        }
-        sx={{ width: 1 }}>
-        <Box
-          sx={{
-            background: colors.interpolatedColor,
-            padding: "5px",
-            border: `2px solid black`,
-            width: 1,
-          }}>
-          {value.toFixed(2)}
-        </Box>
-      </Badge>
+      <Box
+        sx={{
+          background: colors.interpolatedColor,
+          padding: "5px",
+          border: `2px solid black`,
+          width: 1,
+        }}>
+        {value.toFixed(2)}
+      </Box>
     </TableCell>
   );
 }
