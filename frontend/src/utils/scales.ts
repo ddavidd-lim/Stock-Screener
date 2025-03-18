@@ -1,168 +1,307 @@
-import { alpha } from '@mui/material/styles';
-
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 const green = "#00FF00";
 const yellow = "#FFFF00";
 const red = "#FF0000";
 
+export const colors = [
+  green,
+  "#55FF00",
+  "#AAFF00",
+  yellow,
+  "#FFDD00",
+  "#FFBB00",
+  red,
+  "#FF3333",
+  "#CC0000",
+];
+
+function getColorFromScale(value: number, min: number, max: number): string {
+  const index = Math.min(
+    colors.length - 1,
+    Math.max(0, Math.floor(((value - min) / (max - min)) * (colors.length - 1)))
+  );
+  return colors[index];
+}
+
 // Threshold variables
-const peThresholds = { excellent: 15, good: 25, poor: 35 };
-const pegThresholds = { excellent: 1, good: 2, poor: 25 };
-const priceToSalesThresholds = { excellent: 1, good: 2, poor: 25 };
-const priceToBookThresholds = { excellent: 1, good: 3, poor: 25 };
-const dividendYieldThresholds = { excellent: 2, good: 4 };
-const payoutRatioThresholds = { excellent: 50, good: 60, poor: 80 };
-const debtToEquityThresholds = { excellent: 1, good: 2, poor: 3 };
-const currentRatioThresholds = { excellent: 1, good: 2 };
-const betaThresholds = { excellent: 1, good: 2, poor: 3 };
-const roeThresholds = { excellent: 10, good: 20 };
-const roaThresholds = { excellent: 5, good: 10 };
-const evToRevenueThresholds = { excellent: 1, good: 3, poor: 5 };
-const evToEbitdaThresholds = { excellent: 8, good: 10, poor: 12 };
+export const peThresholds = { excellent: 15, good: 25, poor: 35 };
+export const pegThresholds = { excellent: 1, good: 2, poor: 25 };
+export const priceToSalesThresholds = { excellent: 1, good: 2, poor: 25 };
+export const priceToBookThresholds = { excellent: 1, good: 3, poor: 25 };
+export const dividendYieldThresholds = { excellent: 2, good: 4 };
+export const payoutRatioThresholds = { excellent: 50, good: 60, poor: 80 };
+export const debtToEquityThresholds = { excellent: 1, good: 2, poor: 3 };
+export const currentRatioThresholds = { excellent: 1, good: 2 };
+export const betaThresholds = { excellent: 1, good: 2, poor: 3 };
+export const roeThresholds = { excellent: 10, good: 20 };
+export const roaThresholds = { excellent: 5, good: 10 };
+export const evToRevenueThresholds = { excellent: 1, good: 3, poor: 5 };
+export const evToEbitdaThresholds = { excellent: 8, good: 10, poor: 12 };
 
-function interpolateColor(value: number, min: number, max: number, color1: string, color2: string): string {
-  const ratio = Math.max(0, Math.min(1, (value - min) / (max - min)));
-  const hex = (color: string) => {
-    const bigint = parseInt(color.slice(1), 16);
-    return [bigint >> 16 & 255, bigint >> 8 & 255, bigint & 255];
-  };
-  const [r1, g1, b1] = hex(color1);
-  const [r2, g2, b2] = hex(color2);
-  const r = Math.round(r1 * (1 - ratio) + r2 * ratio);
-  const g = Math.round(g1 * (1 - ratio) + g2 * ratio);
-  const b = Math.round(b1 * (1 - ratio) + b2 * ratio);
-  return `rgb(${r}, ${g}, ${b})`;
+function peScale(pe: number): { interpolatedColor: string; basicColor: string } {
+  const thresholds = [peThresholds.excellent, peThresholds.good, peThresholds.poor];
+  const colors = [green, yellow, red];
+
+  for (let i = 0; i < thresholds.length; i++) {
+    if (pe < thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === 0 ? colors[i] : getColorFromScale(pe, thresholds[i - 1], thresholds[i]),
+        basicColor: colors[i],
+      };
+    }
+  }
+
+  return { interpolatedColor: colors[colors.length - 1], basicColor: colors[colors.length - 1] };
 }
 
-function peScale(pe: number): { interpolatedColor: string, basicColor: string } {
-  if (pe < peThresholds.excellent) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (pe < peThresholds.good) {
-    return { interpolatedColor: interpolateColor(pe, peThresholds.excellent, peThresholds.good, green, yellow), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(pe, peThresholds.good, peThresholds.poor, yellow, red), basicColor: red };
+function pegScale(peg: number): { interpolatedColor: string; basicColor: string } {
+  const thresholds = [pegThresholds.excellent, pegThresholds.good, pegThresholds.poor];
+  const colors = [green, yellow, red];
+
+  for (let i = 0; i < thresholds.length; i++) {
+    if (peg < thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === 0 ? colors[i] : getColorFromScale(peg, thresholds[i - 1], thresholds[i]),
+        basicColor: colors[i],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[colors.length - 1], basicColor: colors[colors.length - 1] };
 }
 
-function pegScale(peg: number): { interpolatedColor: string, basicColor: string } {
-  if (peg < pegThresholds.excellent) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (peg < pegThresholds.good) {
-    return { interpolatedColor: interpolateColor(peg, pegThresholds.excellent, pegThresholds.good, green, yellow), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(peg, pegThresholds.good, pegThresholds.poor, yellow, red), basicColor: red };
+function priceToSalesScale(priceToSales: number): {
+  interpolatedColor: string;
+  basicColor: string;
+} {
+  const thresholds = [
+    priceToSalesThresholds.excellent,
+    priceToSalesThresholds.good,
+    priceToSalesThresholds.poor,
+  ];
+  const colors = [green, yellow, red];
+
+  for (let i = 0; i < thresholds.length; i++) {
+    if (priceToSales < thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === 0 ? colors[i] : getColorFromScale(priceToSales, thresholds[i - 1], thresholds[i]),
+        basicColor: colors[i],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[colors.length - 1], basicColor: colors[colors.length - 1] };
 }
 
-function priceToSalesScale(priceToSales: number): { interpolatedColor: string, basicColor: string } {
-  if (priceToSales < priceToSalesThresholds.excellent) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (priceToSales < priceToSalesThresholds.good) {
-    return { interpolatedColor: interpolateColor(priceToSales, priceToSalesThresholds.excellent, priceToSalesThresholds.good, green, yellow), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(priceToSales, priceToSalesThresholds.good, priceToSalesThresholds.poor, yellow, red), basicColor: red };
+function priceToBookScale(priceToBook: number): { interpolatedColor: string; basicColor: string } {
+  const thresholds = [
+    priceToBookThresholds.excellent,
+    priceToBookThresholds.good,
+    priceToBookThresholds.poor,
+  ];
+  const colors = [green, yellow, red];
+
+  for (let i = 0; i < thresholds.length; i++) {
+    if (priceToBook < thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === 0 ? colors[i] : getColorFromScale(priceToBook, thresholds[i - 1], thresholds[i]),
+        basicColor: colors[i],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[colors.length - 1], basicColor: colors[colors.length - 1] };
 }
 
-function priceToBookScale(priceToBook: number): { interpolatedColor: string, basicColor: string } {
-  if (priceToBook < priceToBookThresholds.excellent) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (priceToBook < priceToBookThresholds.good) {
-    return { interpolatedColor: interpolateColor(priceToBook, priceToBookThresholds.excellent, priceToBookThresholds.good, green, yellow), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(priceToBook, priceToBookThresholds.good, priceToBookThresholds.poor, yellow, red), basicColor: red };
+function dividendYieldScale(dividendYield: number): {
+  interpolatedColor: string;
+  basicColor: string;
+} {
+  const thresholds = [dividendYieldThresholds.excellent, dividendYieldThresholds.good];
+  const colors = [red, yellow, green];
+
+  for (let i = thresholds.length - 1; i >= 0; i--) {
+    if (dividendYield > thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === thresholds.length - 1
+            ? colors[i + 1]
+            : getColorFromScale(dividendYield, thresholds[i], thresholds[i + 1]),
+        basicColor: colors[i + 1],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[0], basicColor: colors[0] };
 }
 
-function dividendYieldScale(dividendYield: number): { interpolatedColor: string, basicColor: string } {
-  if (dividendYield > dividendYieldThresholds.good) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (dividendYield > dividendYieldThresholds.excellent) {
-    return { interpolatedColor: interpolateColor(dividendYield, dividendYieldThresholds.excellent, dividendYieldThresholds.good, yellow, green), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(dividendYield, 0, dividendYieldThresholds.excellent, red, yellow), basicColor: red };
+function payoutRatioScale(payoutRatio: number): { interpolatedColor: string; basicColor: string } {
+  const thresholds = [
+    payoutRatioThresholds.excellent,
+    payoutRatioThresholds.good,
+    payoutRatioThresholds.poor,
+  ];
+  const colors = [green, yellow, red];
+
+  for (let i = 0; i < thresholds.length; i++) {
+    if (payoutRatio < thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === 0 ? colors[i] : getColorFromScale(payoutRatio, thresholds[i - 1], thresholds[i]),
+        basicColor: colors[i],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[colors.length - 1], basicColor: colors[colors.length - 1] };
 }
 
-function payoutRatioScale(payoutRatio: number): { interpolatedColor: string, basicColor: string } {
-  if (payoutRatio < payoutRatioThresholds.excellent) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (payoutRatio < payoutRatioThresholds.good) {
-    return { interpolatedColor: interpolateColor(payoutRatio, payoutRatioThresholds.excellent, payoutRatioThresholds.good, green, yellow), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(payoutRatio, payoutRatioThresholds.good, payoutRatioThresholds.poor, yellow, red), basicColor: red };
+function debtToEquityScale(debtToEquity: number): {
+  interpolatedColor: string;
+  basicColor: string;
+} {
+  const thresholds = [
+    debtToEquityThresholds.excellent,
+    debtToEquityThresholds.good,
+    debtToEquityThresholds.poor,
+  ];
+  const colors = [green, yellow, red];
+
+  for (let i = 0; i < thresholds.length; i++) {
+    if (debtToEquity < thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === 0 ? colors[i] : getColorFromScale(debtToEquity, thresholds[i - 1], thresholds[i]),
+        basicColor: colors[i],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[colors.length - 1], basicColor: colors[colors.length - 1] };
 }
 
-function debtToEquityScale(debtToEquity: number): { interpolatedColor: string, basicColor: string } {
-  if (debtToEquity <= debtToEquityThresholds.excellent) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (debtToEquity < debtToEquityThresholds.good) {
-    return { interpolatedColor: interpolateColor(debtToEquity, debtToEquityThresholds.excellent, debtToEquityThresholds.good, green, yellow), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(debtToEquity, debtToEquityThresholds.good, debtToEquityThresholds.poor, yellow, red), basicColor: red };
+function currentRatioScale(currentRatio: number): {
+  interpolatedColor: string;
+  basicColor: string;
+} {
+  const thresholds = [currentRatioThresholds.excellent, currentRatioThresholds.good];
+  const colors = [red, yellow, green];
+
+  for (let i = thresholds.length - 1; i >= 0; i--) {
+    if (currentRatio > thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === thresholds.length - 1
+            ? colors[i + 1]
+            : getColorFromScale(currentRatio, thresholds[i], thresholds[i + 1]),
+        basicColor: colors[i + 1],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[0], basicColor: colors[0] };
 }
 
-function currentRatioScale(currentRatio: number): { interpolatedColor: string, basicColor: string } {
-  if (currentRatio > currentRatioThresholds.good) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (currentRatio > currentRatioThresholds.excellent) {
-    return { interpolatedColor: interpolateColor(currentRatio, currentRatioThresholds.excellent, currentRatioThresholds.good, yellow, green), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(currentRatio, 0, currentRatioThresholds.excellent, red, yellow), basicColor: red };
+function betaScale(beta: number): { interpolatedColor: string; basicColor: string } {
+  const thresholds = [betaThresholds.excellent, betaThresholds.good, betaThresholds.poor];
+  const colors = [green, yellow, red];
+
+  for (let i = 0; i < thresholds.length; i++) {
+    if (beta < thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === 0 ? colors[i] : getColorFromScale(beta, thresholds[i - 1], thresholds[i]),
+        basicColor: colors[i],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[colors.length - 1], basicColor: colors[colors.length - 1] };
 }
 
-function betaScale(beta: number): { interpolatedColor: string, basicColor: string } {
-  if (beta < betaThresholds.excellent) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (beta < betaThresholds.good) {
-    return { interpolatedColor: interpolateColor(beta, betaThresholds.excellent, betaThresholds.good, green, yellow), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(beta, betaThresholds.good, betaThresholds.poor, yellow, red), basicColor: red };
+function roeScale(roe: number): { interpolatedColor: string; basicColor: string } {
+  const thresholds = [roeThresholds.excellent, roeThresholds.good];
+  const colors = [red, yellow, green];
+
+  for (let i = thresholds.length - 1; i >= 0; i--) {
+    if (roe > thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === thresholds.length - 1
+            ? colors[i + 1]
+            : getColorFromScale(roe, thresholds[i], thresholds[i + 1]),
+        basicColor: colors[i + 1],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[0], basicColor: colors[0] };
 }
 
-function roeScale(roe: number): { interpolatedColor: string, basicColor: string } {
-  if (roe > roeThresholds.good) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (roe > roeThresholds.excellent) {
-    return { interpolatedColor: interpolateColor(roe, roeThresholds.excellent, roeThresholds.good, yellow, green), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(roe, 0, roeThresholds.excellent, red, yellow), basicColor: red };
+function roaScale(roa: number): { interpolatedColor: string; basicColor: string } {
+  const thresholds = [roaThresholds.excellent, roaThresholds.good];
+  const colors = [red, yellow, green];
+
+  for (let i = thresholds.length - 1; i >= 0; i--) {
+    if (roa > thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === thresholds.length - 1
+            ? colors[i + 1]
+            : getColorFromScale(roa, thresholds[i], thresholds[i + 1]),
+        basicColor: colors[i + 1],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[0], basicColor: colors[0] };
 }
 
-function roaScale(roa: number): { interpolatedColor: string, basicColor: string } {
-  if (roa > roaThresholds.good) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (roa > roaThresholds.excellent) {
-    return { interpolatedColor: interpolateColor(roa, roaThresholds.excellent, roaThresholds.good, yellow, green), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(roa, 0, roaThresholds.excellent, red, yellow), basicColor: red };
+function evToRevenueScale(evToRevenue: number): { interpolatedColor: string; basicColor: string } {
+  const thresholds = [
+    evToRevenueThresholds.excellent,
+    evToRevenueThresholds.good,
+    evToRevenueThresholds.poor,
+  ];
+  const colors = [green, yellow, red];
+
+  for (let i = 0; i < thresholds.length; i++) {
+    if (evToRevenue < thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === 0 ? colors[i] : getColorFromScale(evToRevenue, thresholds[i - 1], thresholds[i]),
+        basicColor: colors[i],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[colors.length - 1], basicColor: colors[colors.length - 1] };
 }
 
-function evToRevenueScale(evToRevenue: number): { interpolatedColor: string, basicColor: string } {
-  if (evToRevenue < evToRevenueThresholds.excellent) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (evToRevenue < evToRevenueThresholds.good) {
-    return { interpolatedColor: interpolateColor(evToRevenue, evToRevenueThresholds.excellent, evToRevenueThresholds.good, green, yellow), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(evToRevenue, evToRevenueThresholds.good, evToRevenueThresholds.poor, yellow, red), basicColor: red };
-  }
-}
+function evToEbitdaScale(evToEbitda: number): { interpolatedColor: string; basicColor: string } {
+  const thresholds = [
+    evToEbitdaThresholds.excellent,
+    evToEbitdaThresholds.good,
+    evToEbitdaThresholds.poor,
+  ];
+  const colors = [green, yellow, red];
 
-function evToEbitdaScale(evToEbitda: number): { interpolatedColor: string, basicColor: string } {
-  if (evToEbitda < evToEbitdaThresholds.excellent) {
-    return { interpolatedColor: green, basicColor: green };
-  } else if (evToEbitda < evToEbitdaThresholds.good) {
-    return { interpolatedColor: interpolateColor(evToEbitda, evToEbitdaThresholds.excellent, evToEbitdaThresholds.good, green, yellow), basicColor: yellow };
-  } else {
-    return { interpolatedColor: interpolateColor(evToEbitda, evToEbitdaThresholds.good, evToEbitdaThresholds.poor, yellow, red), basicColor: red };
+  for (let i = 0; i < thresholds.length; i++) {
+    if (evToEbitda < thresholds[i]) {
+      return {
+        interpolatedColor:
+          i === 0 ? colors[i] : getColorFromScale(evToEbitda, thresholds[i - 1], thresholds[i]),
+        basicColor: colors[i],
+      };
+    }
   }
+
+  return { interpolatedColor: colors[colors.length - 1], basicColor: colors[colors.length - 1] };
 }
 
 export {
@@ -180,3 +319,35 @@ export {
   evToRevenueScale,
   evToEbitdaScale,
 };
+export function getThresholds(metric: string) {
+  switch (metric) {
+    case "P/E":
+      return peThresholds;
+    case "PEG":
+      return pegThresholds;
+    case "P/S":
+      return priceToSalesThresholds;
+    case "P/B":
+      return priceToBookThresholds;
+    case "Dividend Yield":
+      return dividendYieldThresholds;
+    case "Payout Ratio":
+      return payoutRatioThresholds;
+    case "Debt/Equity":
+      return debtToEquityThresholds;
+    case "Current Ratio":
+      return currentRatioThresholds;
+    case "Beta":
+      return betaThresholds;
+    case "ROE":
+      return roeThresholds;
+    case "ROA":
+      return roaThresholds;
+    case "EV/Revenue":
+      return evToRevenueThresholds;
+    case "EV/EBITDA":
+      return evToEbitdaThresholds;
+    default:
+      return {};
+  }
+}
