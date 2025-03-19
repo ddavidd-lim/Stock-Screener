@@ -74,6 +74,10 @@ const headerData = [
     tooltip: "Beta, a measure of a stock's volatility in relation to the overall market",
     headerTitle: "Beta",
   },
+  {
+    tooltip: "Actions",
+    headerTitle: "Delete"
+  }
 ];
 
 interface HeaderData {
@@ -163,7 +167,7 @@ function ColorCodedCell({
   colors,
 }: {
   value: number;
-  colors: { interpolatedColor: string; basicColor: string };
+  colors: { interpolatedColor: string; };
 }) {
   return (
     <TableCell

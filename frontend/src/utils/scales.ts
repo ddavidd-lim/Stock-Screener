@@ -4,24 +4,24 @@ const green = "#00FF00";
 const yellow = "#FFFF00";
 const red = "#FF0000";
 
-export const colors = [
-  green,
-  "#55FF00",
-  "#AAFF00",
-  yellow,
-  "#FFDD00",
-  "#FFBB00",
-  red,
-  "#FF3333",
-  "#CC0000",
-];
+const greenScale = [green, "#55FF00", "#AAFF00"];
+const yellowScale = [yellow, "#FFDD00", "#FFBB00"];
+const redScale = [red, "#FF3333", "#CC0000"];
 
-function getColorFromScale(value: number, min: number, max: number): string {
-  const index = Math.min(
-    colors.length - 1,
-    Math.max(0, Math.floor(((value - min) / (max - min)) * (colors.length - 1)))
+const colorScales = [greenScale, yellowScale, redScale];
+
+function getColorFromScale(
+  value: number,
+  min: number,
+  max: number,
+  colorScale: Array<string>
+): string {
+  const index = Math.max(
+    0,
+    Math.floor((value - min) / (max - min))
+    // 28 - 25 / 35 - 25 = 3 / 10 = 0.3
   );
-  return colors[index];
+  return colorScale[index];
 }
 
 // Threshold variables
@@ -30,7 +30,7 @@ export const pegThresholds = { excellent: 1, good: 2, poor: 25 };
 export const priceToSalesThresholds = { excellent: 1, good: 2, poor: 25 };
 export const priceToBookThresholds = { excellent: 1, good: 3, poor: 25 };
 export const dividendYieldThresholds = { excellent: 2, good: 4 };
-export const payoutRatioThresholds = { excellent: 50, good: 60, poor: 80 };
+export const payoutRatioThresholds = { excellent: 0.5, good: 0.6, poor: 0.8 };
 export const debtToEquityThresholds = { excellent: 1, good: 2, poor: 3 };
 export const currentRatioThresholds = { excellent: 1, good: 2 };
 export const betaThresholds = { excellent: 1, good: 2, poor: 3 };
@@ -47,7 +47,9 @@ function peScale(pe: number): { interpolatedColor: string; basicColor: string } 
     if (pe < thresholds[i]) {
       return {
         interpolatedColor:
-          i === 0 ? colors[i] : getColorFromScale(pe, thresholds[i - 1], thresholds[i]),
+          i === 0
+            ? colors[i]
+            : getColorFromScale(pe, thresholds[i - 1], thresholds[i], colorScales[i]),
         basicColor: colors[i],
       };
     }
@@ -64,7 +66,9 @@ function pegScale(peg: number): { interpolatedColor: string; basicColor: string 
     if (peg < thresholds[i]) {
       return {
         interpolatedColor:
-          i === 0 ? colors[i] : getColorFromScale(peg, thresholds[i - 1], thresholds[i]),
+          i === 0
+            ? colors[i]
+            : getColorFromScale(peg, thresholds[i - 1], thresholds[i], colorScales[i]),
         basicColor: colors[i],
       };
     }
@@ -88,7 +92,9 @@ function priceToSalesScale(priceToSales: number): {
     if (priceToSales < thresholds[i]) {
       return {
         interpolatedColor:
-          i === 0 ? colors[i] : getColorFromScale(priceToSales, thresholds[i - 1], thresholds[i]),
+          i === 0
+            ? colors[i]
+            : getColorFromScale(priceToSales, thresholds[i - 1], thresholds[i], colorScales[i]),
         basicColor: colors[i],
       };
     }
@@ -109,7 +115,9 @@ function priceToBookScale(priceToBook: number): { interpolatedColor: string; bas
     if (priceToBook < thresholds[i]) {
       return {
         interpolatedColor:
-          i === 0 ? colors[i] : getColorFromScale(priceToBook, thresholds[i - 1], thresholds[i]),
+          i === 0
+            ? colors[i]
+            : getColorFromScale(priceToBook, thresholds[i - 1], thresholds[i], colorScales[i]),
         basicColor: colors[i],
       };
     }
@@ -131,7 +139,7 @@ function dividendYieldScale(dividendYield: number): {
         interpolatedColor:
           i === thresholds.length - 1
             ? colors[i + 1]
-            : getColorFromScale(dividendYield, thresholds[i], thresholds[i + 1]),
+            : getColorFromScale(dividendYield, thresholds[i], thresholds[i + 1], colorScales[i]),
         basicColor: colors[i + 1],
       };
     }
@@ -152,7 +160,9 @@ function payoutRatioScale(payoutRatio: number): { interpolatedColor: string; bas
     if (payoutRatio < thresholds[i]) {
       return {
         interpolatedColor:
-          i === 0 ? colors[i] : getColorFromScale(payoutRatio, thresholds[i - 1], thresholds[i]),
+          i === 0
+            ? colors[i]
+            : getColorFromScale(payoutRatio, thresholds[i - 1], thresholds[i], colorScales[i]),
         basicColor: colors[i],
       };
     }
@@ -176,7 +186,9 @@ function debtToEquityScale(debtToEquity: number): {
     if (debtToEquity < thresholds[i]) {
       return {
         interpolatedColor:
-          i === 0 ? colors[i] : getColorFromScale(debtToEquity, thresholds[i - 1], thresholds[i]),
+          i === 0
+            ? colors[i]
+            : getColorFromScale(debtToEquity, thresholds[i - 1], thresholds[i], colorScales[i]),
         basicColor: colors[i],
       };
     }
@@ -198,7 +210,7 @@ function currentRatioScale(currentRatio: number): {
         interpolatedColor:
           i === thresholds.length - 1
             ? colors[i + 1]
-            : getColorFromScale(currentRatio, thresholds[i], thresholds[i + 1]),
+            : getColorFromScale(currentRatio, thresholds[i], thresholds[i + 1], colorScales[i]),
         basicColor: colors[i + 1],
       };
     }
@@ -215,7 +227,9 @@ function betaScale(beta: number): { interpolatedColor: string; basicColor: strin
     if (beta < thresholds[i]) {
       return {
         interpolatedColor:
-          i === 0 ? colors[i] : getColorFromScale(beta, thresholds[i - 1], thresholds[i]),
+          i === 0
+            ? colors[i]
+            : getColorFromScale(beta, thresholds[i - 1], thresholds[i], colorScales[i]),
         basicColor: colors[i],
       };
     }
@@ -234,7 +248,7 @@ function roeScale(roe: number): { interpolatedColor: string; basicColor: string 
         interpolatedColor:
           i === thresholds.length - 1
             ? colors[i + 1]
-            : getColorFromScale(roe, thresholds[i], thresholds[i + 1]),
+            : getColorFromScale(roe, thresholds[i], thresholds[i + 1], colorScales[i]),
         basicColor: colors[i + 1],
       };
     }
@@ -253,7 +267,7 @@ function roaScale(roa: number): { interpolatedColor: string; basicColor: string 
         interpolatedColor:
           i === thresholds.length - 1
             ? colors[i + 1]
-            : getColorFromScale(roa, thresholds[i], thresholds[i + 1]),
+            : getColorFromScale(roa, thresholds[i], thresholds[i + 1], colorScales[i]),
         basicColor: colors[i + 1],
       };
     }
@@ -274,7 +288,9 @@ function evToRevenueScale(evToRevenue: number): { interpolatedColor: string; bas
     if (evToRevenue < thresholds[i]) {
       return {
         interpolatedColor:
-          i === 0 ? colors[i] : getColorFromScale(evToRevenue, thresholds[i - 1], thresholds[i]),
+          i === 0
+            ? colors[i]
+            : getColorFromScale(evToRevenue, thresholds[i - 1], thresholds[i], colorScales[i]),
         basicColor: colors[i],
       };
     }
@@ -295,7 +311,9 @@ function evToEbitdaScale(evToEbitda: number): { interpolatedColor: string; basic
     if (evToEbitda < thresholds[i]) {
       return {
         interpolatedColor:
-          i === 0 ? colors[i] : getColorFromScale(evToEbitda, thresholds[i - 1], thresholds[i]),
+          i === 0
+            ? colors[i]
+            : getColorFromScale(evToEbitda, thresholds[i - 1], thresholds[i], colorScales[i]),
         basicColor: colors[i],
       };
     }
