@@ -22,13 +22,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import * as columnScales from "../../utils/scales";
+import * as scales from "../../utils/scales";
 
 import { storeList, retrieveList } from "../../utils/store";
 import React from "react";
 
-import { colors } from "../../utils/scales";
-import * as scales from "../../utils/scales";
+const colors = scales.colorScales.flat();
 
 const headerData = [
   { tooltip: "The current trading price of the stock", headerTitle: "Current Price" },
@@ -76,8 +75,8 @@ const headerData = [
   },
   {
     tooltip: "Actions",
-    headerTitle: "Delete"
-  }
+    headerTitle: "Delete",
+  },
 ];
 
 interface HeaderData {
@@ -167,7 +166,7 @@ function ColorCodedCell({
   colors,
 }: {
   value: number;
-  colors: { interpolatedColor: string; };
+  colors: { interpolatedColor: string };
 }) {
   return (
     <TableCell
@@ -312,19 +311,33 @@ export default function TickerTable() {
             </TableHead>
             <TableBody>
               {rows.map((row, index) => {
-                const peColors = columnScales.peScale(row.trailingPE);
-                const pegColors = columnScales.pegScale(row.trailingPegRatio);
-                const priceToSalesColors = columnScales.priceToSalesScale(
+                const peColors = scales.generateScale("P/E", row.trailingPE);
+                const pegColors = scales.generateScale("PEG", row.trailingPegRatio);
+                const priceToSalesColors = scales.generateScale(
+                  "P/S",
                   row.priceToSalesTrailing12Months
                 );
-                const priceToBookColors = columnScales.priceToBookScale(row.priceToBook);
-                const dividendYieldColors = columnScales.dividendYieldScale(
+                const priceToBookColors = scales.generateScale(
+                  "P/B",
+                  row.priceToBook
+                );
+                const dividendYieldColors = scales.generateScale(
+                  "Dividend Yield",
                   row.trailingAnnualDividendYield
                 );
-                const payoutRatioColors = columnScales.payoutRatioScale(row.payoutRatio);
-                const debtToEquityColors = columnScales.debtToEquityScale(row.debtToEquity);
-                const currentRatioColors = columnScales.currentRatioScale(row.currentRatio);
-                const betaColors = columnScales.betaScale(row.beta);
+                const payoutRatioColors = scales.generateScale(
+                  "Payout Ratio",
+                  row.payoutRatio
+                );
+                const debtToEquityColors = scales.generateScale(
+                  "Debt/Equity",
+                  row.debtToEquity
+                );
+                const currentRatioColors = scales.generateScale(
+                  "Current Ratio",
+                  row.currentRatio
+                );
+                const betaColors = scales.generateScale("Beta", row.beta);
 
                 return (
                   <TableRow key={index}>
