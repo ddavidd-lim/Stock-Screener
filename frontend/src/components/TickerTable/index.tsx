@@ -12,6 +12,7 @@ import {
   IconButton,
   Typography,
   Popover,
+  Link,
 } from "@mui/material";
 
 import Grid from "@mui/material/Grid2";
@@ -344,7 +345,7 @@ export default function TickerTable() {
                 return (
                   <TableRow key={index}>
                     <TableCell component="th" scope="row">
-                      {row.shortName}
+                      <Link href={`https://finance.yahoo.com/quote/${row.symbol}`} target="_blank" underline="hover">{row.shortName}</Link>
                     </TableCell>
                     <TableCell align="right">{row.symbol}</TableCell>
                     <TableCell align="right">{row.currentPrice}</TableCell>
