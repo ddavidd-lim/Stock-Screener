@@ -50,15 +50,15 @@ const headerData = [
     tooltip: "Price-to-Book ratio, used to compare a firm's market value to its book value",
     headerTitle: "P/B",
   },
-  {
-    tooltip:
-      "Dividend yield, a financial ratio that shows how much a company pays out in dividends each year relative to its stock price",
-    headerTitle: "Dividend Yield",
-  },
-  {
-    tooltip: "Payout ratio, the proportion of earnings paid out as dividends to shareholders",
-    headerTitle: "Payout Ratio",
-  },
+  // {
+  //   tooltip:
+  //     "Dividend yield, a financial ratio that shows how much a company pays out in dividends each year relative to its stock price",
+  //   headerTitle: "Dividend Yield",
+  // },
+  // {
+  //   tooltip: "Payout ratio, the proportion of earnings paid out as dividends to shareholders",
+  //   headerTitle: "Payout Ratio",
+  // },
   {
     tooltip:
       "Debt-to-Equity ratio, a measure of a company's financial leverage calculated by dividing its total liabilities by stockholders' equity",
@@ -281,10 +281,10 @@ export default function TickerTable() {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        padding: "20px",
         overflow: "hidden",
+        height: "100vh",
       }}>
-      <Stack spacing={2} direction={"row"}>
+      <Stack spacing={2} direction={"row"} flexGrow={1}>
         <TextField
           id="contained"
           label="Ticker Symbol"
@@ -295,8 +295,8 @@ export default function TickerTable() {
           sx={{ overflow: "hidden" }}
         />
       </Stack>
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+      <Paper sx={{ width: "100%", overflow: "hidden", flexGrow: 1 }}>
+        <TableContainer sx={{ height: 1, overflow: "auto" }}>
           <Table
             stickyHeader
             sx={{ minWidth: 650, flexGrow: 1, height: 0 }}
@@ -321,14 +321,14 @@ export default function TickerTable() {
                   "P/B",
                   row.priceToBook
                 );
-                const dividendYieldColors = scales.generateScale(
-                  "Dividend Yield",
-                  row.trailingAnnualDividendYield
-                );
-                const payoutRatioColors = scales.generateScale(
-                  "Payout Ratio",
-                  row.payoutRatio
-                );
+                // const dividendYieldColors = scales.generateScale(
+                //   "Dividend Yield",
+                //   row.trailingAnnualDividendYield
+                // );
+                // const payoutRatioColors = scales.generateScale(
+                //   "Payout Ratio",
+                //   row.payoutRatio
+                // );
                 const debtToEquityColors = scales.generateScale(
                   "Debt/Equity",
                   row.debtToEquity
@@ -352,11 +352,11 @@ export default function TickerTable() {
                       colors={priceToSalesColors}
                     />
                     <ColorCodedCell value={row.priceToBook} colors={priceToBookColors} />
-                    <ColorCodedCell
+                    {/* <ColorCodedCell
                       value={row.trailingAnnualDividendYield}
                       colors={dividendYieldColors}
-                    />
-                    <ColorCodedCell value={row.payoutRatio} colors={payoutRatioColors} />
+                    /> */}
+                    {/* <ColorCodedCell value={row.payoutRatio} colors={payoutRatioColors} /> */}
                     <ColorCodedCell value={row.debtToEquity} colors={debtToEquityColors} />
                     <ColorCodedCell value={row.currentRatio} colors={currentRatioColors} />
                     <ColorCodedCell value={row.beta} colors={betaColors} />

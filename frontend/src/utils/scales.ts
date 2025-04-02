@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-const greenScale = ["#00FF00", "#55FF00", "#AAFF00"];
+const greenScale = ["#00FF00", "#32CD32", "#228B22"];
 const yellowScale = ["#FFFF00", "#FFDD00", "#FFBB00"];
-const redScale = ["#FF0000", "#FF3333", "#CC0000"];
+const redScale = ["#FF4D4D", "#FF0000", "#CC0000"];
 
 export const colorScales = [greenScale, yellowScale, redScale];
 
@@ -12,11 +12,14 @@ function getColorFromScale(
   max: number,
   colorScale: Array<string>
 ): string {
-  const index = Math.max(
-    0,
-    Math.floor((value - min) / (max - min))
-    // 28 - 25 / 35 - 25 = 3 / 10 = 0.3
-  );
+  const range = max - min;
+  const third = range / 3;
+  let index = Math.floor((value - min) / third);
+
+  if (index >= colorScale.length) {
+    index = colorScale.length - 1;
+  }
+
   return colorScale[index];
 }
 
