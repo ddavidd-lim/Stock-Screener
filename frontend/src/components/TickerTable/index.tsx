@@ -181,7 +181,7 @@ function ColorCodedCell({
           border: `2px solid black`,
           width: 1,
         }}>
-        {value.toFixed(2)}
+        {value?.toFixed(2)}
       </Box>
     </TableCell>
   );
@@ -213,6 +213,7 @@ function ColorCodedCell({
 export default function TickerTable() {
   interface TickerData {
     shortName: string;
+    symbol: string;
     currentPrice: number;
     trailingPE: number;
     trailingPegRatio: number;
@@ -304,6 +305,7 @@ export default function TickerTable() {
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
+                <TableCell align="right">Ticker</TableCell>
                 {headerData.map((data, index) => (
                   <HeaderCell key={index} headerTitle={data.headerTitle} tooltip={data.tooltip} />
                 ))}
@@ -344,6 +346,7 @@ export default function TickerTable() {
                     <TableCell component="th" scope="row">
                       {row.shortName}
                     </TableCell>
+                    <TableCell align="right">{row.symbol}</TableCell>
                     <TableCell align="right">{row.currentPrice}</TableCell>
                     <ColorCodedCell value={row.trailingPE} colors={peColors} />
                     <ColorCodedCell value={row.trailingPegRatio} colors={pegColors} />

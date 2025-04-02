@@ -55,9 +55,9 @@ function calculateScale(
 
 // Threshold variables
 export const peThresholds = { excellent: 15, good: 25, poor: 35 };
-export const pegThresholds = { excellent: 1, good: 2, poor: 25 };
-export const priceToSalesThresholds = { excellent: 1, good: 2, poor: 25 };
-export const priceToBookThresholds = { excellent: 1, good: 3, poor: 25 };
+export const pegThresholds = { excellent: 1, good: 2, poor: 5 };
+export const priceToSalesThresholds = { excellent: 1, good: 2, poor: 5 };
+export const priceToBookThresholds = { excellent: 1, good: 3, poor: 6 };
 export const dividendYieldThresholds = { excellent: 2, good: 4 };
 export const payoutRatioThresholds = { excellent: 50, good: 60, poor: 80 };
 export const debtToEquityThresholds = { excellent: 1, good: 2, poor: 3 };
