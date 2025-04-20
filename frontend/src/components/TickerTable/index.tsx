@@ -280,13 +280,17 @@ export default function TickerTable() {
       sx={{
         background: "white",
         display: "flex",
-        justifyContent: "center",
+        justifyContent: "start",
         alignItems: "center",
         flexDirection: "column",
-        overflow: "hidden",
         height: "100vh",
+        boxSizing: "border-box",
+        padding: 2,
       }}>
-      <Stack spacing={2} direction={"row"} flexGrow={1}>
+      <Stack
+        spacing={2}
+        direction={"row"}
+        sx={{ width: "auto", height: "auto" }}>
         <TextField
           id="contained"
           label="Ticker Symbol"
@@ -294,15 +298,11 @@ export default function TickerTable() {
           value={tickerSymbol}
           onChange={(event) => setTickerSymbol(event.target.value)}
           onKeyDown={handleSubmitTicker}
-          sx={{ overflow: "hidden" }}
         />
       </Stack>
-      <Paper sx={{ width: "100%", overflow: "hidden", flexGrow: 1 }}>
-        <TableContainer sx={{ height: 1, overflow: "auto" }}>
-          <Table
-            stickyHeader
-            sx={{ minWidth: 650, flexGrow: 1, height: 0 }}
-            aria-label="simple table">
+      <Paper sx={{ width: "100%", height: "auto", overflow: "hidden" }}>
+        <TableContainer sx={{ height: 1,  overflowY: "auto" }}>
+          <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
@@ -320,10 +320,7 @@ export default function TickerTable() {
                   "P/S",
                   row.priceToSalesTrailing12Months
                 );
-                const priceToBookColors = scales.generateScale(
-                  "P/B",
-                  row.priceToBook
-                );
+                const priceToBookColors = scales.generateScale("P/B", row.priceToBook);
                 // const dividendYieldColors = scales.generateScale(
                 //   "Dividend Yield",
                 //   row.trailingAnnualDividendYield
@@ -332,20 +329,19 @@ export default function TickerTable() {
                 //   "Payout Ratio",
                 //   row.payoutRatio
                 // );
-                const debtToEquityColors = scales.generateScale(
-                  "Debt/Equity",
-                  row.debtToEquity
-                );
-                const currentRatioColors = scales.generateScale(
-                  "Current Ratio",
-                  row.currentRatio
-                );
+                const debtToEquityColors = scales.generateScale("Debt/Equity", row.debtToEquity);
+                const currentRatioColors = scales.generateScale("Current Ratio", row.currentRatio);
                 const betaColors = scales.generateScale("Beta", row.beta);
 
                 return (
                   <TableRow key={index}>
                     <TableCell component="th" scope="row">
-                      <Link href={`https://finance.yahoo.com/quote/${row.symbol}`} target="_blank" underline="hover">{row.shortName}</Link>
+                      <Link
+                        href={`https://finance.yahoo.com/quote/${row.symbol}`}
+                        target="_blank"
+                        underline="hover">
+                        {row.shortName}
+                      </Link>
                     </TableCell>
                     <TableCell align="right">{row.symbol}</TableCell>
                     <TableCell align="right">{row.currentPrice}</TableCell>
@@ -357,9 +353,9 @@ export default function TickerTable() {
                     />
                     <ColorCodedCell value={row.priceToBook} colors={priceToBookColors} />
                     {/* <ColorCodedCell
-                      value={row.trailingAnnualDividendYield}
-                      colors={dividendYieldColors}
-                    /> */}
+              value={row.trailingAnnualDividendYield}
+              colors={dividendYieldColors}
+            /> */}
                     {/* <ColorCodedCell value={row.payoutRatio} colors={payoutRatioColors} /> */}
                     <ColorCodedCell value={row.debtToEquity} colors={debtToEquityColors} />
                     <ColorCodedCell value={row.currentRatio} colors={currentRatioColors} />

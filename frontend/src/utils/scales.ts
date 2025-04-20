@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-const greenScale = ["#00FF00", "#32CD32", "#228B22"];
+const greenScale = ["#228B22", "#32CD32", "#00FF00"];
 const yellowScale = ["#FFFF00", "#FFDD00", "#FFBB00"];
 const redScale = ["#FF4D4D", "#FF0000", "#CC0000"];
 
