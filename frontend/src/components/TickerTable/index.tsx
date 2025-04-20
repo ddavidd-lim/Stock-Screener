@@ -278,7 +278,6 @@ export default function TickerTable() {
   return (
     <Box
       sx={{
-        background: "white",
         display: "flex",
         justifyContent: "start",
         alignItems: "center",

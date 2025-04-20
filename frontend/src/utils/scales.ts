@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-const greenScale = ["#228B22", "#32CD32", "#00FF00"];
-const yellowScale = ["#FFFF00", "#FFDD00", "#FFBB00"];
-const redScale = ["#FF4D4D", "#FF0000", "#CC0000"];
+const greenScale = ["#006400", "#228B22", "#32CD32"];
+const yellowScale = ["#FFBF00", "#FFAA00", "#FF8C00"]; // Darkened yellow shades
+const redScale = ["#8B0000", "#B22222", "#FF0000"];
 
 export const colorScales = [greenScale, yellowScale, redScale];
 
