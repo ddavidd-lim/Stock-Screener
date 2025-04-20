@@ -74,10 +74,6 @@ const headerData = [
     tooltip: "Beta, a measure of a stock's volatility in relation to the overall market",
     headerTitle: "Beta",
   },
-  {
-    tooltip: "Actions",
-    headerTitle: "Delete",
-  },
 ];
 
 interface HeaderData {
@@ -106,7 +102,8 @@ function HeaderCell({ headerTitle, tooltip }: HeaderData) {
         aria-owns={open ? "mouse-over-popover" : undefined}
         aria-haspopup="true"
         onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}>
+        onMouseLeave={handlePopoverClose}
+        variant="subtitle2">
         {headerTitle}
       </Typography>
       <Popover
@@ -286,10 +283,7 @@ export default function TickerTable() {
         boxSizing: "border-box",
         padding: 2,
       }}>
-      <Stack
-        spacing={2}
-        direction={"row"}
-        sx={{ width: "auto", height: "auto" }}>
+      <Stack spacing={2} direction={"row"} sx={{ width: "auto", height: "auto" }}>
         <TextField
           id="contained"
           label="Ticker Symbol"
@@ -300,7 +294,7 @@ export default function TickerTable() {
         />
       </Stack>
       <Paper sx={{ width: "100%", height: "auto", overflow: "hidden" }}>
-        <TableContainer sx={{ height: 1,  overflowY: "auto" }}>
+        <TableContainer sx={{ height: 1, overflowY: "auto" }}>
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -309,6 +303,7 @@ export default function TickerTable() {
                 {headerData.map((data, index) => (
                   <HeaderCell key={index} headerTitle={data.headerTitle} tooltip={data.tooltip} />
                 ))}
+                <TableCell>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

@@ -17,7 +17,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
+      <CssBaseline enableColorScheme/>
       <QueryClientProvider client={queryClient}>
         <TickerTable />
       </QueryClientProvider>
