@@ -13,11 +13,21 @@ import {
   Typography,
   Popover,
   Link,
+  Tabs,
+  Tab,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 
 import Grid from "@mui/material/Grid2";
 
-import { Close as CloseIcon } from "@mui/icons-material";
+import {
+  BookmarkAdd as BookmarkAddIcon,
+  BookmarkRemove as BookmarkRemoveIcon,
+  Close as CloseIcon,
+} from "@mui/icons-material";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -185,6 +195,27 @@ function ColorCodedCell({
   );
 }
 
+interface TickerData {
+  shortName: string;
+  symbol: string;
+  currentPrice: number;
+  trailingPE: number;
+  trailingPegRatio: number;
+  priceToSalesTrailing12Months: number;
+  priceToBook: number;
+  trailingAnnualDividendYield: number;
+  payoutRatio: number;
+  debtToEquity: number;
+  currentRatio: number;
+  beta: number;
+}
+
+type TabData = {
+  label: string;
+  index: number;
+  rows: TickerData[];
+};
+
 /**
  * The main component of the application that fetches and displays financial data in a table format.
  *
@@ -209,26 +240,24 @@ function ColorCodedCell({
  * <TickerTable />
  */
 export default function TickerTable() {
-  interface TickerData {
-    shortName: string;
-    symbol: string;
-    currentPrice: number;
-    trailingPE: number;
-    trailingPegRatio: number;
-    priceToSalesTrailing12Months: number;
-    priceToBook: number;
-    trailingAnnualDividendYield: number;
-    payoutRatio: number;
-    debtToEquity: number;
-    currentRatio: number;
-    beta: number;
-  }
-
   const queryClient = useQueryClient();
 
-  const [rows, setRows] = useState<TickerData[]>([]);
-
   const [tickerSymbol, setTickerSymbol] = useState<string>("");
+
+  const [tabs, setTabs] = useState<TabData[]>([{ label: "General", index: 0, rows: [] }]);
+
+  const [rows, setRows] = useState<TickerData[]>(tabs[0].rows);
+
+  const [currentTab, setCurrentTab] = useState<TabData>(tabs[0]);
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [tabOperation, setTabOperation] = useState<string>("");
+  const [newTabName, setNewTabName] = useState<string>("");
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, tabOperation: string) => {
+    setTabOperation(tabOperation);
+    setAnchorEl(event.currentTarget);
+  };
 
   const query = useQuery({
     queryKey: ["tickerData"],
@@ -252,38 +281,76 @@ export default function TickerTable() {
   useEffect(() => {
     if (query.isSuccess) {
       setRows((prev) => [...prev, query.data]);
-      storeList(
-        "tickerList",
-        [...rows, query.data].map((row) => JSON.stringify(row))
+
+      // Change data of tab # where query took place
+      const newTabs = tabs.map((tab) =>
+        tab.index === currentTab.index ? { ...tab, rows: [...tab.rows, query.data] } : tab
       );
+
+      setTabs(newTabs);
+      storeList(`tickerTabs`, newTabs);
     }
   }, [query.isSuccess, query.data]);
 
   const handleDeleteRow = (index: number) => {
     setRows(rows.filter((_, i) => i !== index));
-    storeList(
-      "tickerList",
-      rows.filter((_, i) => i !== index).map((row) => JSON.stringify(row))
+
+    // Remove the row from the current tab
+    const updatedTabs = tabs.map((tab) =>
+      tab.index === currentTab.index
+        ? { ...tab, rows: tab.rows.filter((_, i) => i !== index) }
+        : tab
     );
+
+    setTabs(updatedTabs);
+    storeList("tickerTabs", updatedTabs);
+  };
+
+  const handleAddTab = (newTabName: string) => {
+    console.log("Adding new tab", newTabName);
+    const newTab: TabData = {
+      label: newTabName,
+      index: tabs.length,
+      rows: [],
+    };
+    setTabs((prev) => [...prev, newTab]);
+    storeList("tickerTabs", [...tabs, newTab]);
   };
 
   useEffect(() => {
-    const storedList = retrieveList("tickerList");
-    setRows(storedList.map((row) => JSON.parse(row)));
+    const storedList = retrieveList("tickerTabs") as unknown as TabData[];
+    console.log("Parsed Tabs", storedList);
+    if (storedList.length > 0) {
+      const parsedTabs: TabData[] = storedList.map((tab) => ({
+        label: tab.label,
+        index: tab.index,
+        rows: tab.rows || [],
+      }));
+      setTabs(parsedTabs);
+      setRows(parsedTabs[0].rows);
+      setCurrentTab(parsedTabs[0]);
+    } else {
+      setTabs([{ label: "General", index: 0, rows: [] }]);
+      setCurrentTab({ label: "General", index: 0, rows: [] });
+      setRows([]);
+    }
   }, []);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setCurrentTab(tabs[newValue]);
+    setRows(tabs[newValue].rows);
+  };
 
   return (
     <Box
       sx={{
         display: "flex",
-        justifyContent: "start",
-        alignItems: "center",
         flexDirection: "column",
         height: "100vh",
         boxSizing: "border-box",
         padding: 2,
       }}>
-      <Stack spacing={2} direction={"row"} sx={{ width: "auto", height: "auto" }}>
+      <Stack spacing={1} direction={"row"} sx={{ width: "auto", height: "auto" }}>
         <TextField
           id="contained"
           label="Ticker Symbol"
@@ -292,6 +359,96 @@ export default function TickerTable() {
           onChange={(event) => setTickerSymbol(event.target.value)}
           onKeyDown={handleSubmitTicker}
         />
+        <Tabs
+          value={currentTab.index}
+          onChange={handleTabChange}
+          scrollButtons="auto"
+          variant="scrollable">
+          {tabs.map((tab) => (
+            <Tab
+              key={tab.index}
+              label={tab.label}
+              onClick={() => {
+                setCurrentTab(tab);
+                setRows(tab.rows);
+              }}
+            />
+          ))}
+        </Tabs>
+        <IconButton
+          sx={{ width: 50, height: 50 }}
+          onClick={(event) => handlePopoverOpen(event, "add")}>
+          <BookmarkAddIcon />
+        </IconButton>
+        <IconButton
+          sx={{ width: 50, height: 50 }}
+          onClick={(event) => handlePopoverOpen(event, "remove")}>
+          <BookmarkRemoveIcon />
+        </IconButton>
+        <Popover
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          onClose={() => setAnchorEl(null)}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              padding: 2,
+              width: "auto",
+              minWidth: tabOperation === "remove" ? 200 : "auto", // Ensure the box grows for the select
+            }}>
+            {tabOperation === "add" ? (
+              <>
+                <Typography sx={{ mb: 1 }}>Add Watchlist</Typography>
+                <TextField
+                  id="contained"
+                  label="New Watchlist Name"
+                  variant="outlined"
+                  value={tabOperation === "add" ? newTabName : ""}
+                  onChange={(event) => setNewTabName(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      handleAddTab(newTabName);
+                      setNewTabName(""); // Clear the state after adding the tab
+                      setAnchorEl(null);
+                    }
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <Typography sx={{ mb: 1 }}>Remove Watchlist</Typography>
+                <FormControl fullWidth>
+                  <InputLabel>Select Watchlist</InputLabel>
+                  <Select
+                    label="Select Watchlist"
+                    variant="outlined"
+                    autoWidth
+                    onChange={(event) => {
+                      const newTabs = tabs.filter((tab) => tab.label !== event.target.value);
+                      setTabs(newTabs);
+                      storeList("tickerTabs", newTabs);
+                    }}>
+                    {tabs.slice(1).length == 0 ? (
+                      <MenuItem disabled>No tabs to remove</MenuItem>
+                    ) : (
+                      tabs.slice(1).map((tab) => (
+                        <MenuItem key={tab.index} value={tab.label}>
+                          {tab.label}
+                        </MenuItem>
+                      ))
+                    )}
+                  </Select>
+                </FormControl>
+              </>
+            )}
+          </Box>
+        </Popover>
       </Stack>
       <Paper sx={{ width: "100%", height: "auto", overflow: "hidden" }}>
         <TableContainer sx={{ height: 1, overflowY: "auto" }}>

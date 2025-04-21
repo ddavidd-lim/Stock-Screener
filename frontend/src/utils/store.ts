@@ -1,4 +1,4 @@
-const storeList = (key: string, list: string[]): void => {
+const storeList = (key: string, list: object[]): void => {
   const jsonString = JSON.stringify(list);
   localStorage.setItem(key, jsonString);
 };
