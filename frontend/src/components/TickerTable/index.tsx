@@ -259,38 +259,12 @@ export default function TickerTable() {
     setAnchorEl(event.currentTarget);
   };
 
-  const query = useQuery({
-    queryKey: ["tickerData"],
-    queryFn: async () => {
-      const response = await axios.get(
-        `http://localhost:8000/stock${tickerSymbol ? `?ticker=${tickerSymbol}` : ""}`
-      );
-      return response.data;
-    },
-    retry: false,
-    enabled: false,
-  });
-
   const handleSubmitTicker = (event: React.KeyboardEvent) => {
     if (event.key !== "Enter") return;
     queryClient.invalidateQueries({ queryKey: ["tickerData"] });
     query.refetch();
     setTickerSymbol("");
   };
-
-  useEffect(() => {
-    if (query.isSuccess) {
-      setRows((prev) => [...prev, query.data]);
-
-      // Change data of tab # where query took place
-      const newTabs = tabs.map((tab) =>
-        tab.index === currentTab.index ? { ...tab, rows: [...tab.rows, query.data] } : tab
-      );
-
-      setTabs(newTabs);
-      storeList(`tickerTabs`, newTabs);
-    }
-  }, [query.isSuccess, query.data]);
 
   const handleDeleteRow = (index: number) => {
     setRows(rows.filter((_, i) => i !== index));
@@ -317,6 +291,38 @@ export default function TickerTable() {
     storeList("tickerTabs", [...tabs, newTab]);
   };
 
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    setCurrentTab(tabs[newValue]);
+    setRows(tabs[newValue].rows);
+  };
+
+  const query = useQuery({
+    queryKey: ["tickerData"],
+    queryFn: async () => {
+      const response = await axios.get(
+        `http://localhost:8000/stock${tickerSymbol ? `?ticker=${tickerSymbol}` : ""}`
+      );
+      return response.data;
+    },
+    retry: false,
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (query.isSuccess) {
+      setRows((prev) => [...prev, query.data]);
+
+      // Change data of tab # where query took place
+      const newTabs = tabs.map((tab) =>
+        tab.index === currentTab.index ? { ...tab, rows: [...tab.rows, query.data] } : tab
+      );
+
+      setTabs(newTabs);
+      storeList(`tickerTabs`, newTabs);
+    }
+  }, [query.isSuccess, query.data, currentTab.index, tabs]);
+
+  // Fetch data from local storage
   useEffect(() => {
     const storedList = retrieveList("tickerTabs") as unknown as TabData[];
     console.log("Parsed Tabs", storedList);
@@ -335,11 +341,7 @@ export default function TickerTable() {
       setRows([]);
     }
   }, []);
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setCurrentTab(tabs[newValue]);
-    setRows(tabs[newValue].rows);
-  };
+  
 
   return (
     <Box
@@ -350,7 +352,7 @@ export default function TickerTable() {
         boxSizing: "border-box",
         padding: 2,
       }}>
-      <Stack spacing={1} direction={"row"} sx={{ width: "auto", height: "auto" }}>
+      <Stack direction={"row"} sx={{ width: "auto", height: "auto" }}>
         <TextField
           id="contained"
           label="Ticker Symbol"
@@ -358,11 +360,13 @@ export default function TickerTable() {
           value={tickerSymbol}
           onChange={(event) => setTickerSymbol(event.target.value)}
           onKeyDown={handleSubmitTicker}
+          sx={{ width: "auto"}}
         />
         <Tabs
           value={currentTab.index}
           onChange={handleTabChange}
           scrollButtons="auto"
+          allowScrollButtonsMobile
           variant="scrollable">
           {tabs.map((tab) => (
             <Tab

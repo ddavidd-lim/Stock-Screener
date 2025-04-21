@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 const greenScale = ["#006400", "#228B22", "#32CD32"];
 const yellowScale = ["#FFBF00", "#FFAA00", "#FF8C00"]; // Darkened yellow shades
 const redScale = ["#8B0000", "#B22222", "#FF0000"];
