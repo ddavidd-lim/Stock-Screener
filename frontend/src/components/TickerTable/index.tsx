@@ -248,7 +248,7 @@ export default function TickerTable() {
 
   const [rows, setRows] = useState<TickerData[]>(tabs[0].rows);
 
-  const [currentTab, setCurrentTab] = useState<TabData>(tabs[0]);
+  const [currentTabIndex, setCurrentTabIndex] = useState<number>(0);
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [tabOperation, setTabOperation] = useState<string>("");
@@ -271,7 +271,7 @@ export default function TickerTable() {
 
     // Remove the row from the current tab
     const updatedTabs = tabs.map((tab) =>
-      tab.index === currentTab.index
+      tab.index === currentTabIndex
         ? { ...tab, rows: tab.rows.filter((_, i) => i !== index) }
         : tab
     );
@@ -292,7 +292,7 @@ export default function TickerTable() {
   };
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setCurrentTab(tabs[newValue]);
+    setCurrentTabIndex(newValue);
     setRows(tabs[newValue].rows);
   };
 
@@ -314,13 +314,13 @@ export default function TickerTable() {
 
       // Change data of tab # where query took place
       const newTabs = tabs.map((tab) =>
-        tab.index === currentTab.index ? { ...tab, rows: [...tab.rows, query.data] } : tab
+        tab.index === currentTabIndex ? { ...tab, rows: [...tab.rows, query.data] } : tab
       );
 
       setTabs(newTabs);
       storeList(`tickerTabs`, newTabs);
     }
-  }, [query.isSuccess, query.data, currentTab.index, tabs]);
+  }, [query.isSuccess, query.data, currentTabIndex, tabs]);
 
   // Fetch data from local storage
   useEffect(() => {
@@ -334,14 +334,11 @@ export default function TickerTable() {
       }));
       setTabs(parsedTabs);
       setRows(parsedTabs[0].rows);
-      setCurrentTab(parsedTabs[0]);
     } else {
       setTabs([{ label: "General", index: 0, rows: [] }]);
-      setCurrentTab({ label: "General", index: 0, rows: [] });
       setRows([]);
     }
   }, []);
-  
 
   return (
     <Box
@@ -360,10 +357,10 @@ export default function TickerTable() {
           value={tickerSymbol}
           onChange={(event) => setTickerSymbol(event.target.value)}
           onKeyDown={handleSubmitTicker}
-          sx={{ width: "auto"}}
+          sx={{ width: "auto" }}
         />
         <Tabs
-          value={currentTab.index}
+          value={tabs.findIndex((tab) => tab.index === currentTabIndex)}
           onChange={handleTabChange}
           scrollButtons="auto"
           allowScrollButtonsMobile
@@ -373,7 +370,6 @@ export default function TickerTable() {
               key={tab.index}
               label={tab.label}
               onClick={() => {
-                setCurrentTab(tab);
                 setRows(tab.rows);
               }}
             />
