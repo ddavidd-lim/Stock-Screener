@@ -30,7 +30,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import * as scales from "../../utils/scales";
 
 import { storeList, retrieveList } from "../../utils/store";
@@ -153,6 +153,7 @@ export default function TickerTable() {
 
   // LOCAL STORAGE: mount data from localStorage on component mount
   useEffect(() => {
+    console.log("Component mounted, loading tabs from localStorage");
     const storedTabs = retrieveList("tickerTabs") as unknown as TabData[];
 
     if (storedTabs && storedTabs.length > 0) {

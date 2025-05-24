@@ -43,11 +43,16 @@ async def ticker(request: Request):
         return {"error": "Maximum of 50 ticker symbols allowed."}
 
     tickers_data = []
+    
     data = yf.Tickers(ticker_symbols)
     print("data", data)
-    for ticker in data:
+    print("data.tickers", data.tickers)
+    for ticker_data in data.tickers.values():
         try:
-            pass
+            ticker_info = ticker_data.info
+            tickers_data.append(ticker_info)
+            
+            
             # Simulate fetching data
             # tickers_data.append(
             #     {
@@ -73,8 +78,9 @@ async def ticker(request: Request):
             #     }
             # )
         except Exception as e:
-            print(f"Error fetching data for {symbol}: {e}")
-            return {"error": f"Failed to fetch data for {symbol}: {str(e)}"}
+            pass
+            # print(f"Error fetching data for {symbol}: {e}")
+            # return {"error": f"Failed to fetch data for {symbol}: {str(e)}"}
 
     return tickers_data
 
