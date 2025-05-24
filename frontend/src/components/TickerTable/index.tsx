@@ -21,179 +21,23 @@ import {
   InputLabel,
 } from "@mui/material";
 
-import Grid from "@mui/material/Grid2";
-
 import {
   BookmarkAdd as BookmarkAddIcon,
   BookmarkRemove as BookmarkRemoveIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as scales from "../../utils/scales";
 
 import { storeList, retrieveList } from "../../utils/store";
 import React from "react";
-
-const colors = scales.colorScales.flat();
-
-const headerData = [
-  { tooltip: "The current trading price of the stock", headerTitle: "Current Price" },
-  {
-    tooltip:
-      "Price-to-Earnings ratio, a valuation metric for determining the relative value of a company's shares",
-    headerTitle: "P/E",
-  },
-  {
-    tooltip:
-      "Price/Earnings to Growth ratio, used to determine a stock's value while taking the company's earnings growth into account",
-    headerTitle: "PEG",
-  },
-  {
-    tooltip:
-      "Price-to-Sales ratio, a valuation ratio that compares a company's stock price to its revenues",
-    headerTitle: "P/S",
-  },
-  {
-    tooltip: "Price-to-Book ratio, used to compare a firm's market value to its book value",
-    headerTitle: "P/B",
-  },
-  // {
-  //   tooltip:
-  //     "Dividend yield, a financial ratio that shows how much a company pays out in dividends each year relative to its stock price",
-  //   headerTitle: "Dividend Yield",
-  // },
-  // {
-  //   tooltip: "Payout ratio, the proportion of earnings paid out as dividends to shareholders",
-  //   headerTitle: "Payout Ratio",
-  // },
-  {
-    tooltip:
-      "Debt-to-Equity ratio, a measure of a company's financial leverage calculated by dividing its total liabilities by stockholders' equity",
-    headerTitle: "Debt/Equity",
-  },
-  {
-    tooltip:
-      "Current ratio, a liquidity ratio that measures a company's ability to pay short-term obligations",
-    headerTitle: "Current Ratio",
-  },
-  {
-    tooltip: "Beta, a measure of a stock's volatility in relation to the overall market",
-    headerTitle: "Beta",
-  },
-];
-
-interface HeaderData {
-  tooltip: string;
-  headerTitle: string;
-}
-
-function HeaderCell({ headerTitle, tooltip }: HeaderData) {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const open = Boolean(anchorEl);
-
-  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const metricThresholds: { excellent?: string; good?: string; poor?: string } =
-    scales.getThresholds(headerTitle); // Dynamically fetch colors based on metric
-
-  return (
-    <TableCell align="right">
-      <Typography
-        aria-owns={open ? "mouse-over-popover" : undefined}
-        aria-haspopup="true"
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
-        variant="subtitle2">
-        {headerTitle}
-      </Typography>
-      <Popover
-        id="mouse-over-popover"
-        sx={{ pointerEvents: "none" }}
-        open={open}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        onClose={handlePopoverClose}
-        disableRestoreFocus>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            padding: 1,
-          }}>
-          <Typography sx={{ mb: 1 }}>{tooltip}</Typography>
-          <Grid container direction={"row"}>
-            {colors.map((color, index) => (
-              <Grid container key={index} alignItems="center" direction={"column"}>
-                <Grid
-                  sx={{
-                    background: color,
-                    width: 25,
-                    height: 25,
-                    border: "2px solid black",
-                  }}
-                />
-                <Grid>
-                  {index === 2 && <Typography>{metricThresholds.excellent}</Typography>}
-                  {index === 5 && <Typography>{metricThresholds.good}</Typography>}
-                  {index === 8 && <Typography>{metricThresholds.poor}</Typography>}
-                </Grid>
-                <Grid>
-                  {index === 2 && <Typography sx={{ width: 0 }}>Excellent</Typography>}
-                  {index === 5 && <Typography sx={{ width: 0 }}>Good</Typography>}
-                  {index === 8 && <Typography sx={{ width: 0 }}>Poor</Typography>}
-                </Grid>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Popover>
-    </TableCell>
-  );
-}
-
-function ColorCodedCell({
-  value,
-  colors,
-}: {
-  value: number;
-  colors: { interpolatedColor: string };
-}) {
-  return (
-    <TableCell
-      align="right"
-      sx={{
-        padding: "10px",
-      }}>
-      <Box
-        sx={{
-          background: colors.interpolatedColor,
-          padding: "5px",
-          border: `2px solid black`,
-          width: 1,
-        }}>
-        {value?.toFixed(2)}
-      </Box>
-    </TableCell>
-  );
-}
+import { ColorCodedCell } from "./ColorCodedCell";
+import { HeaderCell } from "./HeaderCell";
+import { headerData } from "./constants";
 
 interface TickerData {
   shortName: string;
@@ -213,7 +57,7 @@ interface TickerData {
 type TabData = {
   label: string;
   index: number;
-  rows: TickerData[];
+  tickers: string[];
 };
 
 /**
@@ -240,105 +84,153 @@ type TabData = {
  * <TickerTable />
  */
 export default function TickerTable() {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-  const [tickerSymbol, setTickerSymbol] = useState<string>("");
-
-  const [tabs, setTabs] = useState<TabData[]>([{ label: "General", index: 0, rows: [] }]);
-
-  const [rows, setRows] = useState<TickerData[]>(tabs[0].rows);
-
+  const [tickerSearch, setTickerSearch] = useState<string>("");
+  const [tickerSymbols, setTickerSymbols] = useState<string[]>([]);
+  const [tabs, setTabs] = useState<TabData[]>([{ label: "General", index: 0, tickers: [] }]);
+  const [tickerData, setTickerData] = useState<TickerData[]>([]);
   const [currentTabIndex, setCurrentTabIndex] = useState<number>(0);
-
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [tabOperation, setTabOperation] = useState<string>("");
   const [newTabName, setNewTabName] = useState<string>("");
+
+  const initialLoad = useRef(true); // Track if it's the initial load
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, tabOperation: string) => {
     setTabOperation(tabOperation);
     setAnchorEl(event.currentTarget);
   };
 
-  const handleSubmitTicker = (event: React.KeyboardEvent) => {
-    if (event.key !== "Enter") return;
-    queryClient.invalidateQueries({ queryKey: ["tickerData"] });
-    query.refetch();
-    setTickerSymbol("");
-  };
-
-  const handleDeleteRow = (index: number) => {
-    setRows(rows.filter((_, i) => i !== index));
-
-    // Remove the row from the current tab
-    const updatedTabs = tabs.map((tab) =>
-      tab.index === currentTabIndex
-        ? { ...tab, rows: tab.rows.filter((_, i) => i !== index) }
-        : tab
-    );
-
-    setTabs(updatedTabs);
-    storeList("tickerTabs", updatedTabs);
-  };
-
-  const handleAddTab = (newTabName: string) => {
-    console.log("Adding new tab", newTabName);
-    const newTab: TabData = {
-      label: newTabName,
-      index: tabs.length,
-      rows: [],
-    };
-    setTabs((prev) => [...prev, newTab]);
-    storeList("tickerTabs", [...tabs, newTab]);
-  };
-
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setCurrentTabIndex(newValue);
-    setRows(tabs[newValue].rows);
-  };
-
+  // USEQUERY: to fetch ticker data
   const query = useQuery({
-    queryKey: ["tickerData"],
+    queryKey: ["tickerData", tickerSymbols],
     queryFn: async () => {
-      const response = await axios.get(
-        `http://localhost:8000/stock${tickerSymbol ? `?ticker=${tickerSymbol}` : ""}`
-      );
+      const tickers = tickerSymbols.join(",");
+      console.log("Fetching data for ticker symbols:", tickers);
+      if (tickers.length === 0) {
+        return [];
+      }
+
+      const response = await axios.get(`http://localhost:8000/stock?tickers=${tickers}`);
       return response.data;
     },
     retry: false,
-    enabled: false,
+    enabled: !initialLoad.current, // Disable the query on initial load
   });
 
+  const mutation = useMutation({
+    mutationFn: async (tabs: object[]) => {
+      storeList("tickerTabs", tabs);
+    },
+    onSuccess: () => {
+      // query.refetch();
+    },
+  });
+
+  const updateTab = (queryData: TickerData[], tabIndex: number, tabs: TabData[]) => {
+    // Update tabs with new ticker queryData
+    console.log("Updating tab with query data:", queryData, "for tab index:", tabIndex);
+    console.log("Current tabs before update:", tabs);
+    const updatedTabs = tabs.map((tab) =>
+      tab.index === tabIndex
+        ? { ...tab, tickers: queryData.map((ticker: TickerData) => ticker.symbol) }
+        : tab
+    );
+    setTabs(updatedTabs);
+    mutation.mutate(updatedTabs);
+  };
+
+  // PROCESS: query data
   useEffect(() => {
     if (query.isSuccess) {
-      setRows((prev) => [...prev, query.data]);
+      console.log("Query success:", query.data);
 
-      // Change data of tab # where query took place
-      const newTabs = tabs.map((tab) =>
-        tab.index === currentTabIndex ? { ...tab, rows: [...tab.rows, query.data] } : tab
-      );
-
-      setTabs(newTabs);
-      storeList(`tickerTabs`, newTabs);
+      updateTab(query.data, currentTabIndex, tabs);
+      setTickerData(query.data);
     }
-  }, [query.isSuccess, query.data, currentTabIndex, tabs]);
+  }, [query.isSuccess, query.data]);
 
-  // Fetch data from local storage
+  // LOCAL STORAGE: mount data from localStorage on component mount
   useEffect(() => {
-    const storedList = retrieveList("tickerTabs") as unknown as TabData[];
-    console.log("Parsed Tabs", storedList);
-    if (storedList.length > 0) {
-      const parsedTabs: TabData[] = storedList.map((tab) => ({
-        label: tab.label,
-        index: tab.index,
-        rows: tab.rows || [],
+    const storedTabs = retrieveList("tickerTabs") as unknown as TabData[];
+
+    if (storedTabs && storedTabs.length > 0) {
+      const parsedTabs: TabData[] = storedTabs.map((tab) => ({
+        label: tab.label || "Unnamed",
+        index: typeof tab.index === "number" ? tab.index : 0,
+        tickers: Array.isArray(tab.tickers) ? tab.tickers : [],
       }));
+      console.log("Parsed tabs from localStorage:", parsedTabs);
+
       setTabs(parsedTabs);
-      setRows(parsedTabs[0].rows);
-    } else {
-      setTabs([{ label: "General", index: 0, rows: [] }]);
-      setRows([]);
+
+      // Get tickers from the first tab to load initially
+      const initialTabTickers = parsedTabs[0]?.tickers || [];
+      if (initialTabTickers.length > 0) {
+        setTickerSymbols(initialTabTickers);
+      }
     }
+    initialLoad.current = false; // Set to false after the first load
   }, []);
+
+  // -- Handle adding row with the Enter key to submit the ticker search
+  const handleAddTicker = (event: React.KeyboardEvent) => {
+    if (event.key !== "Enter") return;
+    if (!tickerSearch.trim()) return;
+
+    setTickerSymbols([...tickerSymbols, tickerSearch.trim().toUpperCase()]);
+    setTickerSearch("");
+  };
+
+  // -- Handle deleting row
+  const handleDeleteRow = (index: number) => {
+    console.log(`Deleting row ${index}: ${tickerSymbols[index]}`);
+    const updatedTickerSymbols = tickerSymbols.filter((_, tickerIndex) => tickerIndex != index);
+    if (updatedTickerSymbols.length == 0) {
+      updateTab([], currentTabIndex, tabs);
+    }
+    setTickerSymbols(updatedTickerSymbols);
+  };
+
+  // -- Handle adding a new tab
+  const handleAddTab = (newTabName: string) => {
+    if (!newTabName.trim()) return;
+
+    const newTab: TabData = {
+      label: newTabName.trim(),
+      index: tabs.length,
+      tickers: [],
+    };
+
+    const updatedTabs = [...tabs, newTab];
+    setNewTabName("");
+    setTabs(updatedTabs);
+
+    setCurrentTabIndex(newTab.index);
+    setTickerSymbols([]); // Clear ticker symbols when adding a new tab
+  };
+
+  // -- Handle deleting a tab
+  const handleDeleteTab = (tabIndex: number) => {
+    const updatedTabs = tabs.filter((tab) => tab.index !== tabIndex);
+    setTabs(updatedTabs);
+    mutation.mutate(updatedTabs);
+  };
+
+  // -- Handle changing tabs
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    // Load tickers for the selected tab
+    const selectedTab = tabs.find((tab) => tab.index === newValue);
+    console.log("Switching to tab: ", selectedTab);
+    if (selectedTab) {
+      const tickersToFetch = selectedTab.tickers;
+
+      // Fetch missing tickers
+      setTickerSymbols(tickersToFetch);
+      setCurrentTabIndex(newValue);
+    }
+  };
 
   return (
     <Box
@@ -354,14 +246,13 @@ export default function TickerTable() {
           id="contained"
           label="Ticker Symbol"
           variant="outlined"
-          value={tickerSymbol}
-          onChange={(event) => setTickerSymbol(event.target.value)}
-          onKeyDown={handleSubmitTicker}
+          value={tickerSearch}
+          onChange={(event) => setTickerSearch(event.target.value)}
+          onKeyDown={handleAddTicker}
           sx={{ width: "auto" }}
         />
         <Tabs
           value={tabs.findIndex((tab) => tab.index === currentTabIndex)}
-          onChange={handleTabChange}
           scrollButtons="auto"
           allowScrollButtonsMobile
           variant="scrollable">
@@ -369,8 +260,8 @@ export default function TickerTable() {
             <Tab
               key={tab.index}
               label={tab.label}
-              onClick={() => {
-                setRows(tab.rows);
+              onClick={(event) => {
+                handleTabChange(event, tab.index);
               }}
             />
           ))}
@@ -430,9 +321,10 @@ export default function TickerTable() {
                     variant="outlined"
                     autoWidth
                     onChange={(event) => {
-                      const newTabs = tabs.filter((tab) => tab.label !== event.target.value);
-                      setTabs(newTabs);
-                      storeList("tickerTabs", newTabs);
+                      const index = tabs.findIndex((tab) => tab.label === event.target.value);
+                      handleDeleteTab(index);
+                      setCurrentTabIndex(index - 1);
+                      setTickerSymbols(tabs[index - 1]?.tickers || []); // Load tickers from the previous tab
                     }}>
                     {tabs.slice(1).length == 0 ? (
                       <MenuItem disabled>No tabs to remove</MenuItem>
@@ -464,7 +356,7 @@ export default function TickerTable() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row, index) => {
+              {tickerData.map((row, index) => {
                 const peColors = scales.generateScale("P/E", row.trailingPE);
                 const pegColors = scales.generateScale("PEG", row.trailingPegRatio);
                 const priceToSalesColors = scales.generateScale(

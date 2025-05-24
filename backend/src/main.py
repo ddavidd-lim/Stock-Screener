@@ -1,3 +1,4 @@
+import json
 import yfinance as yf
 import pprint
 from fastapi import FastAPI
@@ -17,16 +18,65 @@ app.add_middleware(
 )
 
 
+# @app.get("/stock")
+# async def ticker(request: Request):
+#     print("/stock")
+#     ticker_symbol = request.query_params.get("ticker", "NVDA")
+#     print(ticker_symbol)
+#     data = yf.Ticker(ticker_symbol)
+
+#     info = data.info
+
+#     return info
+
+
 @app.get("/stock")
 async def ticker(request: Request):
     print("/stock")
-    ticker_symbol = request.query_params.get("ticker", "NVDA")
-    print(ticker_symbol)
-    data = yf.Ticker(ticker_symbol)
+    tickers_param = request.query_params.get("tickers", "NVDA")
+    ticker_symbols = [t.strip().upper() for t in tickers_param.split(",") if t.strip()]
+    print("tickers_param", tickers_param)
+    print("ticker_symbols", ticker_symbols)
+    if not ticker_symbols:
+        return {"error": "No ticker symbols provided."}
+    if len(ticker_symbols) > 50:
+        return {"error": "Maximum of 50 ticker symbols allowed."}
 
-    info = data.info
-    
-    return info
+    tickers_data = []
+    data = yf.Tickers(ticker_symbols)
+    print("data", data)
+    for ticker in data:
+        try:
+            pass
+            # Simulate fetching data
+            # tickers_data.append(
+            #     {
+            #         "symbol": symbol,
+            #         "longName": "Rate Limited",
+            #         "trailingPE": 0,
+            #         "trailingPEGRatio": 0,
+            #         "priceToSalesTrailing12Months": 0,
+            #         "priceToBook": 0,
+            #         "trailingEps": 0,
+            #         "trailingAnnualDividendYield": 0,
+            #         "payoutRatio": 0,
+            #         "returnOnAssets": 0,
+            #         "returnOnEquity": 0,
+            #         "profitMargins": 0,
+            #         "debtToEquity": 0,
+            #         "currentRatio": 0,
+            #         "beta": 0,
+            #         "52WeekChange": 0,
+            #         "fiftyTwoWeekHigh": 0,
+            #         "fiftyTwoWeekLow": 0,
+            #         "currentPrice": 0,
+            #     }
+            # )
+        except Exception as e:
+            print(f"Error fetching data for {symbol}: {e}")
+            return {"error": f"Failed to fetch data for {symbol}: {str(e)}"}
+
+    return tickers_data
 
 
 if __name__ == "__main__":
@@ -77,4 +127,3 @@ if __name__ == "__main__":
     fifty_two_week_high = info["fiftyTwoWeekHigh"]
     fifty_two_week_low = info["fiftyTwoWeekLow"]
     stock_price = info["currentPrice"]
-
