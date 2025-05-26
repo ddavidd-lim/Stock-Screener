@@ -18,7 +18,7 @@ interface HeaderData {
   headerTitle: string;
 }
 
-export function HeaderCell({ headerTitle, tooltip }: HeaderData) {
+export default function HeaderCell({ headerTitle, tooltip }: HeaderData) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 

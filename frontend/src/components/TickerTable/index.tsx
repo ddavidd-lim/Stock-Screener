@@ -12,7 +12,6 @@ import {
   IconButton,
   Typography,
   Popover,
-  Link,
   Tabs,
   Tab,
   Select,
@@ -35,9 +34,10 @@ import * as scales from "../../utils/scales";
 
 import { storeList, retrieveList } from "../../utils/store";
 import React from "react";
-import { ColorCodedCell } from "./ColorCodedCell";
-import { HeaderCell } from "./HeaderCell";
+import ColorCodedCell from "./ColorCodedCell";
+import HeaderCell from "./HeaderCell";
 import { headerData } from "./constants";
+import TickerNameCell from "./TickerNameCell";
 
 interface TickerData {
   shortName: string;
@@ -379,14 +379,7 @@ export default function TickerTable() {
 
                 return (
                   <TableRow key={index}>
-                    <TableCell component="th" scope="row">
-                      <Link
-                        href={`https://finance.yahoo.com/quote/${row.symbol}`}
-                        target="_blank"
-                        underline="hover">
-                        {row.shortName}
-                      </Link>
-                    </TableCell>
+                    <TickerNameCell tickerName={row.shortName} tickerSymbol={row.symbol}></TickerNameCell>
                     <TableCell align="right">{row.symbol}</TableCell>
                     <TableCell align="right">{row.currentPrice}</TableCell>
                     <ColorCodedCell value={row.trailingPE} colors={peColors} />

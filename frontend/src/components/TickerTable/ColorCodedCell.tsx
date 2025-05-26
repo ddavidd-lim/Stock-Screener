@@ -3,7 +3,7 @@ import {
   Box,
 } from "@mui/material";
 
-export function ColorCodedCell({
+export default function ColorCodedCell({
   value,
   colors,
 }: {
@@ -18,10 +18,11 @@ export function ColorCodedCell({
       }}>
       <Box
         sx={{
-          background: colors.interpolatedColor,
+          background: value ? colors.interpolatedColor : "transparent",
           padding: "5px",
           border: `2px solid black`,
           width: 1,
+          minHeight: "34px",
         }}>
         {value?.toFixed(2)}
       </Box>
