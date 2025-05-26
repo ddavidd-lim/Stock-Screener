@@ -44,7 +44,7 @@ export function importFromJson(
           return;
         }
 
-        localStorage.setItem("yourKey", JSON.stringify(parsed));
+        localStorage.setItem("tickerTabs", JSON.stringify(parsed));
         onSuccess(parsed); // Update parent state
         alert("Import successful!");
       }

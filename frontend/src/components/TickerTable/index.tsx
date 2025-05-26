@@ -368,14 +368,16 @@ export default function TickerTable() {
             </TableHead>
             <TableBody>
               {query.isFetching && (
-                <CircularProgress
-                  size={40}
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                  }}></CircularProgress>
+                <TableRow>
+                  <CircularProgress
+                    size={40}
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                    }}></CircularProgress>
+                </TableRow>
               )}
               {!query.isFetching &&
                 tickerData.map((row, index) => {
@@ -420,9 +422,9 @@ export default function TickerTable() {
               colors={dividendYieldColors}
             /> */}
                       {/* <ColorCodedCell value={row.payoutRatio} colors={payoutRatioColors} /> */}
-                      <ColorCodedCell value={row.debtToEquity} colors={debtToEquityColors} />
-                      <ColorCodedCell value={row.currentRatio} colors={currentRatioColors} />
-                      <ColorCodedCell value={row.beta} colors={betaColors} />
+                      <ColorCodedCell value={row.debtToEquity} colors={debtToEquityColors} variant="segment"/>
+                      <ColorCodedCell value={row.currentRatio} colors={currentRatioColors} variant="pulse" />
+                      <ColorCodedCell value={row.beta} colors={betaColors} variant="pulse"/>
                       <TableCell align="right">
                         <IconButton color="error" onClick={() => handleDeleteRow(index)}>
                           <CloseIcon />

@@ -1,6 +1,11 @@
-const greenScale = ["#006400", "#228B22", "#32CD32"];
-const yellowScale = ["#FFBF00", "#FFAA00", "#FF8C00"]; // Darkened yellow shades
-const redScale = ["#8B0000", "#B22222", "#FF0000"];
+const greenScale = ["#004d00", "#007a33", "#00b86b"]; // dark green → medium green → light green
+const yellowScale = ["#a3cc00", "#ffd000", "#ffa000"]; // gold → orange → dark orange
+const redScale = ["#ff5c00", "#d10000", "#8b0000"];    // orange-red → crimson → dark red
+
+
+// const greenScale = ["#006400", "#00A550", "#00FF7F"]; // dark green → medium green → light green
+// const yellowScale = ["#FFD700", "#FFA500", "#FF8C00"]; // gold → orange → dark orange
+// const redScale = ["#FF4500", "#DC143C", "#8B0000"];    // orange-red → crimson → dark red
 
 export const colorScales = [greenScale, yellowScale, redScale];
 
