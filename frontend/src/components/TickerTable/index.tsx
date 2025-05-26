@@ -254,7 +254,8 @@ export default function TickerTable() {
       <Stack direction={"row"} sx={{ width: "auto", height: "auto" }}>
         <TextField
           id="contained"
-          label="Ticker Symbol"
+          label="Search Ticker"
+          placeholder="NVDA,AAPL,GOOGL"
           variant="outlined"
           value={tickerSearch}
           onChange={(event) => setTickerSearch(event.target.value)}
@@ -444,7 +445,7 @@ export default function TickerTable() {
           style={{ display: "none" }}
           onChange={(e) => importFromJson(e, setTabs)}
         />
-        <ButtonGroup variant="contained" orientation="horizontal">
+        <ButtonGroup variant="text" orientation="horizontal">
           <Button
             onClick={() => {
               const input = document.getElementById("import-json-input") as HTMLInputElement;
