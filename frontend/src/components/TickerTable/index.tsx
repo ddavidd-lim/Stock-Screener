@@ -18,6 +18,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  CircularProgress,
 } from "@mui/material";
 
 import {
@@ -154,6 +155,7 @@ export default function TickerTable() {
   // LOCAL STORAGE: mount data from localStorage on component mount
   useEffect(() => {
     console.log("Component mounted, loading tabs from localStorage");
+    setCurrentTabIndex(0); // Reset to the first tab on mount
     const storedTabs = retrieveList("tickerTabs") as unknown as TabData[];
 
     if (storedTabs && storedTabs.length > 0) {
@@ -357,54 +359,70 @@ export default function TickerTable() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {tickerData.map((row, index) => {
-                const peColors = scales.generateScale("P/E", row.trailingPE);
-                const pegColors = scales.generateScale("PEG", row.trailingPegRatio);
-                const priceToSalesColors = scales.generateScale(
-                  "P/S",
-                  row.priceToSalesTrailing12Months
-                );
-                const priceToBookColors = scales.generateScale("P/B", row.priceToBook);
-                // const dividendYieldColors = scales.generateScale(
-                //   "Dividend Yield",
-                //   row.trailingAnnualDividendYield
-                // );
-                // const payoutRatioColors = scales.generateScale(
-                //   "Payout Ratio",
-                //   row.payoutRatio
-                // );
-                const debtToEquityColors = scales.generateScale("Debt/Equity", row.debtToEquity);
-                const currentRatioColors = scales.generateScale("Current Ratio", row.currentRatio);
-                const betaColors = scales.generateScale("Beta", row.beta);
+              {query.isFetching && (
+                <CircularProgress
+                  size={40}
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                  }}></CircularProgress>
+              )}
+              {!query.isFetching &&
+                tickerData.map((row, index) => {
+                  const peColors = scales.generateScale("P/E", row.trailingPE);
+                  const pegColors = scales.generateScale("PEG", row.trailingPegRatio);
+                  const priceToSalesColors = scales.generateScale(
+                    "P/S",
+                    row.priceToSalesTrailing12Months
+                  );
+                  const priceToBookColors = scales.generateScale("P/B", row.priceToBook);
+                  // const dividendYieldColors = scales.generateScale(
+                  //   "Dividend Yield",
+                  //   row.trailingAnnualDividendYield
+                  // );
+                  // const payoutRatioColors = scales.generateScale(
+                  //   "Payout Ratio",
+                  //   row.payoutRatio
+                  // );
+                  const debtToEquityColors = scales.generateScale("Debt/Equity", row.debtToEquity);
+                  const currentRatioColors = scales.generateScale(
+                    "Current Ratio",
+                    row.currentRatio
+                  );
+                  const betaColors = scales.generateScale("Beta", row.beta);
 
-                return (
-                  <TableRow key={index}>
-                    <TickerNameCell tickerName={row.shortName} tickerSymbol={row.symbol}></TickerNameCell>
-                    <TableCell align="right">{row.symbol}</TableCell>
-                    <TableCell align="right">{row.currentPrice}</TableCell>
-                    <ColorCodedCell value={row.trailingPE} colors={peColors} />
-                    <ColorCodedCell value={row.trailingPegRatio} colors={pegColors} />
-                    <ColorCodedCell
-                      value={row.priceToSalesTrailing12Months}
-                      colors={priceToSalesColors}
-                    />
-                    <ColorCodedCell value={row.priceToBook} colors={priceToBookColors} />
-                    {/* <ColorCodedCell
+                  return (
+                    <TableRow key={index}>
+                      <TickerNameCell
+                        tickerName={row.shortName}
+                        tickerSymbol={row.symbol}></TickerNameCell>
+                      <TableCell align="right">{row.symbol}</TableCell>
+                      <TableCell align="right">{row.currentPrice}</TableCell>
+                      <ColorCodedCell value={row.trailingPE} colors={peColors} />
+                      <ColorCodedCell value={row.trailingPegRatio} colors={pegColors} />
+                      <ColorCodedCell
+                        value={row.priceToSalesTrailing12Months}
+                        colors={priceToSalesColors}
+                      />
+                      <ColorCodedCell value={row.priceToBook} colors={priceToBookColors} />
+                      {/* <ColorCodedCell
               value={row.trailingAnnualDividendYield}
               colors={dividendYieldColors}
             /> */}
-                    {/* <ColorCodedCell value={row.payoutRatio} colors={payoutRatioColors} /> */}
-                    <ColorCodedCell value={row.debtToEquity} colors={debtToEquityColors} />
-                    <ColorCodedCell value={row.currentRatio} colors={currentRatioColors} />
-                    <ColorCodedCell value={row.beta} colors={betaColors} />
-                    <TableCell align="right">
-                      <IconButton color="error" onClick={() => handleDeleteRow(index)}>
-                        <CloseIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                      {/* <ColorCodedCell value={row.payoutRatio} colors={payoutRatioColors} /> */}
+                      <ColorCodedCell value={row.debtToEquity} colors={debtToEquityColors} />
+                      <ColorCodedCell value={row.currentRatio} colors={currentRatioColors} />
+                      <ColorCodedCell value={row.beta} colors={betaColors} />
+                      <TableCell align="right">
+                        <IconButton color="error" onClick={() => handleDeleteRow(index)}>
+                          <CloseIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>
