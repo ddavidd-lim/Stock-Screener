@@ -19,12 +19,16 @@ import {
   FormControl,
   InputLabel,
   CircularProgress,
+  ButtonGroup,
+  Button,
 } from "@mui/material";
 
 import {
   BookmarkAdd as BookmarkAddIcon,
   BookmarkRemove as BookmarkRemoveIcon,
   Close as CloseIcon,
+  FileUpload as FileUploadButton,
+  FileDownload as FileDownloadIcon,
 } from "@mui/icons-material";
 
 import { useEffect, useRef, useState } from "react";
@@ -39,6 +43,8 @@ import ColorCodedCell from "./ColorCodedCell";
 import HeaderCell from "./HeaderCell";
 import { headerData } from "./constants";
 import TickerNameCell from "./TickerNameCell";
+
+import { importFromJson, exportToJson } from "../../utils/import";
 
 interface TickerData {
   shortName: string;
@@ -240,9 +246,10 @@ export default function TickerTable() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        height: "100vh",
+        height: "100%",
         boxSizing: "border-box",
         padding: 2,
+        gap: 2,
       }}>
       <Stack direction={"row"} sx={{ width: "auto", height: "auto" }}>
         <TextField
@@ -345,8 +352,8 @@ export default function TickerTable() {
           </Box>
         </Popover>
       </Stack>
-      <Paper sx={{ width: "100%", height: "auto", overflow: "hidden" }}>
-        <TableContainer sx={{ height: 1, overflowY: "auto" }}>
+      <Paper sx={{ width: "100%", height: "auto", overflow: "hidden", flex: 1 }}>
+        <TableContainer sx={{ height: 1, overflowY: "auto", flex: 1 }}>
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -427,6 +434,31 @@ export default function TickerTable() {
           </Table>
         </TableContainer>
       </Paper>
+
+      {/* Button group at bottom */}
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <input
+          type="file"
+          accept="application/json"
+          id="import-json-input"
+          style={{ display: "none" }}
+          onChange={(e) => importFromJson(e, setTabs)}
+        />
+        <ButtonGroup variant="contained" orientation="horizontal">
+          <Button
+            onClick={() => {
+              const input = document.getElementById("import-json-input") as HTMLInputElement;
+              if (input) input.click();
+            }}>
+            <FileDownloadIcon sx={{ mr: 1 }} />
+            Import
+          </Button>
+          <Button onClick={() => exportToJson(tabs)}>
+            <FileUploadButton sx={{ mr: 1 }} />
+            Export
+          </Button>
+        </ButtonGroup>
+      </Box>
     </Box>
   );
 }
