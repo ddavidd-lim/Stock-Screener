@@ -23,10 +23,13 @@ function TradingViewWidget(props: TradingViewWidgetProps) {
         {
           "autosize": true,
           "symbol": "${props.tickerSymbol}",
+          "range": "1M",
           "interval": "D",
           "timezone": "Etc/UTC",
           "theme": "dark",
-          "style": "1",
+          "style": "3",
+          "withdateranges": true,
+          "save_image": false,
           "locale": "en",
           "support_host": "https://www.tradingview.com"
         }`;
