@@ -11,24 +11,14 @@ app = FastAPI()
 # Allow CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Allows all origins
+    allow_origins=[
+        "http://localhost:5173",
+        "https://stock-screener-jtkk4l5ds-ddavidd-lims-projects.vercel.app",
+    ],  # Allows all origins
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
-
-
-# @app.get("/stock")
-# async def ticker(request: Request):
-#     print("/stock")
-#     ticker_symbol = request.query_params.get("ticker", "NVDA")
-#     print(ticker_symbol)
-#     data = yf.Ticker(ticker_symbol)
-
-#     info = data.info
-
-#     return info
-
 
 @app.get("/stock")
 async def ticker(request: Request):
@@ -43,7 +33,7 @@ async def ticker(request: Request):
         return {"error": "Maximum of 50 ticker symbols allowed."}
 
     tickers_data = []
-    
+
     data = yf.Tickers(ticker_symbols)
     print("data", data)
     print("data.tickers", data.tickers)
@@ -51,36 +41,8 @@ async def ticker(request: Request):
         try:
             ticker_info = ticker_data.info
             tickers_data.append(ticker_info)
-            
-            
-            # Simulate fetching data
-            # tickers_data.append(
-            #     {
-            #         "symbol": symbol,
-            #         "longName": "Rate Limited",
-            #         "trailingPE": 0,
-            #         "trailingPEGRatio": 0,
-            #         "priceToSalesTrailing12Months": 0,
-            #         "priceToBook": 0,
-            #         "trailingEps": 0,
-            #         "trailingAnnualDividendYield": 0,
-            #         "payoutRatio": 0,
-            #         "returnOnAssets": 0,
-            #         "returnOnEquity": 0,
-            #         "profitMargins": 0,
-            #         "debtToEquity": 0,
-            #         "currentRatio": 0,
-            #         "beta": 0,
-            #         "52WeekChange": 0,
-            #         "fiftyTwoWeekHigh": 0,
-            #         "fiftyTwoWeekLow": 0,
-            #         "currentPrice": 0,
-            #     }
-            # )
         except Exception as e:
             pass
-            # print(f"Error fetching data for {symbol}: {e}")
-            # return {"error": f"Failed to fetch data for {symbol}: {str(e)}"}
 
     return tickers_data
 
