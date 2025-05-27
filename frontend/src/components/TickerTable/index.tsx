@@ -364,6 +364,7 @@ export default function TickerTable() {
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
+                <TableCell></TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell align="right">Ticker</TableCell>
                 {headerData.map((data, index) => {
@@ -373,7 +374,6 @@ export default function TickerTable() {
                     <HeaderCell key={index} headerTitle={data.headerTitle} tooltip={data.tooltip} />
                   );
                 })}
-                <TableCell>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -435,6 +435,11 @@ export default function TickerTable() {
 
                   return (
                     <TableRow key={index}>
+                      <TableCell align="right">
+                        <IconButton color="error" onClick={() => handleDeleteRow(index)}>
+                          <CloseIcon />
+                        </IconButton>
+                      </TableCell>
                       <TickerNameCell
                         tickerName={row.shortName}
                         tickerSymbol={row.symbol}></TickerNameCell>
@@ -490,11 +495,6 @@ export default function TickerTable() {
                         variant="pulse"
                       />
                       <ColorCodedCell value={row.beta} color={betaColor} variant="pulse" />
-                      <TableCell align="right">
-                        <IconButton color="error" onClick={() => handleDeleteRow(index)}>
-                          <CloseIcon />
-                        </IconButton>
-                      </TableCell>
                     </TableRow>
                   );
                 })}
