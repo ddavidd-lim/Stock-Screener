@@ -406,7 +406,6 @@ export default function TickerTable() {
                   );
                   const priceToBookColor = scales.evaluateColorTier("P/B", row.priceToBook);
                   const roeColor = scales.evaluateColorTier("ROE", percentageRoe);
-                  console.log("ROE Color:", roeColor, "Value:", percentageRoe);
                   const roaColor = scales.evaluateColorTier("ROA", percentageRoa);
                   const enterpriseToRevenueColor = scales.evaluateColorTier(
                     "EV/Revenue",

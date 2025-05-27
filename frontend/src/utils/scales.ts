@@ -176,9 +176,6 @@ export const betaThresholds: ThresholdDefinition = {
 };
 
 export function evaluateColorTier(metric: string, value: number): string {
-  if (metric === "ROE") {
-    console.log("--Evaluating ROE with value:", value);
-  }
   if (value === null || value === undefined || value < 0) {
     return "transparent"; // black for invalid values
   }
