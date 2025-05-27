@@ -47,6 +47,8 @@ import TickerNameCell from "./TickerNameCell";
 
 import { importFromJson, exportToJson } from "../../utils/import";
 
+import API_BASE_URL from "../../utils/api";
+
 interface TickerData {
   shortName: string;
   symbol: string;
@@ -124,7 +126,7 @@ export default function TickerTable() {
         return [];
       }
 
-      const response = await axios.get(`http://localhost:8000/stock?tickers=${tickers}`);
+      const response = await axios.get(`${API_BASE_URL}/stock?tickers=${tickers}`);
       return response.data;
     },
     retry: false,
