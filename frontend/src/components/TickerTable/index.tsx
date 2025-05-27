@@ -366,60 +366,72 @@ export default function TickerTable() {
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell align="right">Ticker</TableCell>
-                {headerData.map((data, index) => (
-                  <HeaderCell key={index} headerTitle={data.headerTitle} tooltip={data.tooltip} />
-                ))}
+                {headerData.map((data, index) => {
+                  return data.headerTitle === "Current Price" ? (
+                    <TableCell key={index}>{data.headerTitle}</TableCell>
+                  ) : (
+                    <HeaderCell key={index} headerTitle={data.headerTitle} tooltip={data.tooltip} />
+                  );
+                })}
                 <TableCell>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {query.isFetching && (
                 <TableRow>
-                  <CircularProgress
-                    size={40}
-                    sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                    }}></CircularProgress>
+                  <TableCell colSpan={headerData.length + 2} align="center">
+                    <CircularProgress
+                      size={40}
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                      }}></CircularProgress>
+                  </TableCell>
                 </TableRow>
               )}
               {!query.isFetching &&
                 tickerData.map((row, index) => {
-                  const peColors = scales.generateScale("P/E", row.trailingPE);
-                  const pegColors = scales.generateScale("PEG", row.trailingPegRatio);
-                  const priceToSalesColors = scales.generateScale(
+                  const percentageRoe = row.returnOnEquity * 100;
+                  const percentageRoa = row.returnOnAssets * 100;
+                  const percentageDividendYield = row.trailingAnnualDividendYield * 100;
+                  const percentagePayoutRatio = row.payoutRatio * 100;
+
+                  const peColor = scales.evaluateColorTier("P/E", row.trailingPE);
+                  const pegColor = scales.evaluateColorTier("PEG", row.trailingPegRatio);
+                  const priceToSalesColor = scales.evaluateColorTier(
                     "P/S",
                     row.priceToSalesTrailing12Months
                   );
-                  const priceToBookColors = scales.generateScale("P/B", row.priceToBook);
-                  const roeColors = scales.generateScale("ROE", row.returnOnEquity);
-                  const roaColors = scales.generateScale("ROA", row.returnOnAssets);
-                  const enterpriseToRevenueColors = scales.generateScale(
+                  const priceToBookColor = scales.evaluateColorTier("P/B", row.priceToBook);
+                  const roeColor = scales.evaluateColorTier("ROE", percentageRoe);
+                  const roaColor = scales.evaluateColorTier("ROA", percentageRoa);
+                  const enterpriseToRevenueColor = scales.evaluateColorTier(
                     "EV/Revenue",
                     row.enterpriseToRevenue
                   );
-                  const enterpriseToEbitdaColors = scales.generateScale(
+                  const enterpriseToEbitdaColor = scales.evaluateColorTier(
                     "EV/EBITDA",
                     row.enterpriseToEbitda
                   );
-                  console.log("Enterprise to Ebitda:", row.enterpriseToEbitda);
-                  console.log("Colors:", enterpriseToEbitdaColors);
-                  // const dividendYieldColors = scales.generateScale(
-                  //   "Dividend Yield",
-                  //   row.trailingAnnualDividendYield
-                  // );
-                  // const payoutRatioColors = scales.generateScale(
-                  //   "Payout Ratio",
-                  //   row.payoutRatio
-                  // );
-                  const debtToEquityColors = scales.generateScale("Debt/Equity", row.debtToEquity);
-                  const currentRatioColors = scales.generateScale(
+                  const dividendYieldColor = scales.evaluateColorTier(
+                    "Dividend Yield",
+                    percentageDividendYield
+                  );
+                  const payoutRatioColor = scales.evaluateColorTier(
+                    "Payout Ratio",
+                    percentagePayoutRatio
+                  );
+                  const debtToEquityColor = scales.evaluateColorTier(
+                    "Debt/Equity",
+                    row.debtToEquity
+                  );
+                  const currentRatioColor = scales.evaluateColorTier(
                     "Current Ratio",
                     row.currentRatio
                   );
-                  const betaColors = scales.generateScale("Beta", row.beta);
+                  const betaColor = scales.evaluateColorTier("Beta", row.beta);
 
                   return (
                     <TableRow key={index}>
@@ -435,44 +447,49 @@ export default function TickerTable() {
                       </TableCell>
                       <TableCell align="right">
                         <Chip
-                          label={row.currentPrice.toFixed(2)}
+                          label={row.currentPrice?.toFixed(2)}
                           variant="outlined"
                           size="medium"
                           sx={{ textTransform: "uppercase" }}></Chip>
                       </TableCell>
-                      <ColorCodedCell value={row.trailingPE} colors={peColors} />
-                      <ColorCodedCell value={row.trailingPegRatio} colors={pegColors} />
+                      <ColorCodedCell value={row.trailingPE} color={peColor} />
+                      <ColorCodedCell value={row.trailingPegRatio} color={pegColor} />
                       <ColorCodedCell
                         value={row.priceToSalesTrailing12Months}
-                        colors={priceToSalesColors}
+                        color={priceToSalesColor}
                       />
-                      <ColorCodedCell value={row.priceToBook} colors={priceToBookColors} />
-                      <ColorCodedCell value={row.returnOnEquity} colors={roeColors} />
-                      <ColorCodedCell value={row.returnOnAssets} colors={roaColors} />
+                      <ColorCodedCell value={row.priceToBook} color={priceToBookColor} />
+                      <ColorCodedCell value={percentageRoe} color={roeColor} suffix="%" />
+                      <ColorCodedCell value={percentageRoa} color={roaColor} suffix="%" />
                       <ColorCodedCell
                         value={row.enterpriseToRevenue}
-                        colors={enterpriseToRevenueColors}
+                        color={enterpriseToRevenueColor}
                       />
                       <ColorCodedCell
                         value={row.enterpriseToEbitda}
-                        colors={enterpriseToEbitdaColors}
+                        color={enterpriseToEbitdaColor}
                       />
-                      {/* <ColorCodedCell
-              value={row.trailingAnnualDividendYield}
-              colors={dividendYieldColors}
-            /> */}
-                      {/* <ColorCodedCell value={row.payoutRatio} colors={payoutRatioColors} /> */}
+                      <ColorCodedCell
+                        value={percentageDividendYield}
+                        color={dividendYieldColor}
+                        suffix="%"
+                      />
+                      <ColorCodedCell
+                        value={percentagePayoutRatio}
+                        color={payoutRatioColor}
+                        suffix="%"
+                      />
                       <ColorCodedCell
                         value={row.debtToEquity}
-                        colors={debtToEquityColors}
+                        color={debtToEquityColor}
                         variant="segment"
                       />
                       <ColorCodedCell
                         value={row.currentRatio}
-                        colors={currentRatioColors}
+                        color={currentRatioColor}
                         variant="pulse"
                       />
-                      <ColorCodedCell value={row.beta} colors={betaColors} variant="pulse" />
+                      <ColorCodedCell value={row.beta} color={betaColor} variant="pulse" />
                       <TableCell align="right">
                         <IconButton color="error" onClick={() => handleDeleteRow(index)}>
                           <CloseIcon />

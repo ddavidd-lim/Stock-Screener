@@ -1,9 +1,4 @@
-import {
-  TableCell,
-  Box,
-  Typography,
-  Popover,
-} from "@mui/material";
+import { TableCell, Box, Typography, Popover } from "@mui/material";
 
 import Grid from "@mui/material/Grid2";
 
@@ -30,7 +25,7 @@ export default function HeaderCell({ headerTitle, tooltip }: HeaderData) {
     setAnchorEl(null);
   };
 
-  const metricThresholds: { excellent?: string; good?: string; poor?: string } =
+  const metricThresholds: { excellent?: number; good?: number; poor?: number; direction: string } =
     scales.getThresholds(headerTitle); // Dynamically fetch colors based on metric
 
   return (

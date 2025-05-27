@@ -37,15 +37,15 @@ export const headerData = [
       "Compares the value of a company, debt and cash, to its Earnings Before Interest, Taxes, Depreciation, and Amortization",
     headerTitle: "EV/EBITDA",
   },
-  // {
-  //   tooltip:
-  //     "Dividend yield, a financial ratio that shows how much a company pays out in dividends each year relative to its stock price",
-  //   headerTitle: "Dividend Yield",
-  // },
-  // {
-  //   tooltip: "Payout ratio, the proportion of earnings paid out as dividends to shareholders",
-  //   headerTitle: "Payout Ratio",
-  // },
+  {
+    tooltip:
+      "Dividend yield, a financial ratio that shows how much a company pays out in dividends each year relative to its stock price",
+    headerTitle: "Dividend Yield",
+  },
+  {
+    tooltip: "Payout ratio, the proportion of earnings paid out as dividends to shareholders",
+    headerTitle: "Payout Ratio",
+  },
   {
     tooltip:
       "Measures a company's financial leverage calculated by dividing its total liabilities by stockholders' equity",

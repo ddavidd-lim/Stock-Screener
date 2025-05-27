@@ -12,7 +12,7 @@ import {
 
 export default function ColorCodedCell({
   value,
-  colors,
+  color,
   variant = "heatmap",
   intensity = "high", // low, medium, high - for controlling color opacity
   showIcon = false,
@@ -21,7 +21,7 @@ export default function ColorCodedCell({
   formatValue = true,
 }: {
   value: number;
-  colors: { interpolatedColor: string };
+  color: string;
   variant?: "subtle" | "minimal" | "bar" | "indicator" | "gradient" | "border" | "chip" | "heatmap" | "segment" | "pulse" | "ribbon" | "diamond";
   intensity?: "low" | "medium" | "high";
   showIcon?: boolean;
@@ -54,8 +54,8 @@ export default function ColorCodedCell({
         return (
           <Box
             sx={{
-              backgroundColor: value ? `${colors.interpolatedColor}${opacity.bg}` : "transparent",
-              borderLeft: value ? `3px solid ${colors.interpolatedColor}` : "3px solid transparent",
+              backgroundColor: value ? `${color}${opacity.bg}` : "transparent",
+              borderLeft: value ? `3px solid ${color}` : "3px solid transparent",
               padding: "8px 12px",
               borderRadius: "4px",
               minHeight: "36px",
@@ -65,7 +65,7 @@ export default function ColorCodedCell({
               gap: 0.5,
               transition: "all 0.2s ease",
               "&:hover": {
-                backgroundColor: value ? `${colors.interpolatedColor}${opacity.hover}` : "transparent",
+                backgroundColor: value ? `${color}${opacity.hover}` : "transparent",
               }
             }}>
             {getIcon()}
@@ -87,7 +87,7 @@ export default function ColorCodedCell({
           <Box
             sx={{
               background: value ? 
-                `linear-gradient(135deg, ${colors.interpolatedColor}${opacity.bg} 0%, ${colors.interpolatedColor}${opacity.accent} 100%)` : 
+                `linear-gradient(135deg, ${color}${opacity.bg} 0%, ${color}${opacity.accent} 100%)` : 
                 "transparent",
               padding: "8px 12px",
               borderRadius: "6px",
@@ -105,7 +105,7 @@ export default function ColorCodedCell({
                 left: 0,
                 right: 0,
                 height: "1px",
-                background: colors.interpolatedColor,
+                background: color,
                 opacity: 0.6,
               } : {},
             }}>
@@ -127,8 +127,8 @@ export default function ColorCodedCell({
         return (
           <Box
             sx={{
-              border: value ? `2px solid ${colors.interpolatedColor}${opacity.accent}` : "2px solid transparent",
-              backgroundColor: value ? `${colors.interpolatedColor}05` : "transparent",
+              border: value ? `2px solid ${color}${opacity.accent}` : "2px solid transparent",
+              backgroundColor: value ? `${color}05` : "transparent",
               padding: "6px 10px",
               borderRadius: "8px",
               minHeight: "36px",
@@ -138,8 +138,8 @@ export default function ColorCodedCell({
               gap: 0.5,
               transition: "all 0.2s ease",
               "&:hover": {
-                borderColor: value ? colors.interpolatedColor : "transparent",
-                backgroundColor: value ? `${colors.interpolatedColor}${opacity.bg}` : "transparent",
+                borderColor: value ? color : "transparent",
+                backgroundColor: value ? `${color}${opacity.bg}` : "transparent",
               }
             }}>
             {getIcon()}
@@ -172,16 +172,16 @@ export default function ColorCodedCell({
                 size="small"
                 icon={getIcon()}
                 sx={{
-                  backgroundColor: `${colors.interpolatedColor}${opacity.bg}`,
+                  backgroundColor: `${color}${opacity.bg}`,
                   color: "text.primary",
-                  border: `1px solid ${colors.interpolatedColor}${opacity.accent}`,
+                  border: `1px solid ${color}${opacity.accent}`,
                   fontFamily: "monospace",
                   fontWeight: 500,
                   "& .MuiChip-label": {
                     fontSize: "0.875rem",
                   },
                   "&:hover": {
-                    backgroundColor: `${colors.interpolatedColor}${opacity.hover}`,
+                    backgroundColor: `${color}${opacity.hover}`,
                   }
                 }}
               />
@@ -203,7 +203,7 @@ export default function ColorCodedCell({
         return (
           <Box
             sx={{
-              backgroundColor: value ? colors.interpolatedColor : "rgba(0,0,0,0.05)",
+              backgroundColor: value ? color : "rgba(0,0,0,0.05)",
               padding: "8px 12px",
               borderRadius: "2px",
               minHeight: "36px",
@@ -255,7 +255,7 @@ export default function ColorCodedCell({
                     width: "4px",
                     height: "16px",
                     backgroundColor: value && i < Math.ceil((Math.abs(value) / 100) * 5) ? 
-                      colors.interpolatedColor : 
+                      color : 
                       "rgba(0,0,0,0.1)",
                     borderRadius: "2px",
                     transition: "all 0.2s ease",
@@ -297,7 +297,7 @@ export default function ColorCodedCell({
                   width: "6px",
                   height: "6px",
                   borderRadius: "50%",
-                  backgroundColor: colors.interpolatedColor,
+                  backgroundColor: color,
                   position: "relative",
                   "&::before": {
                     content: '""',
@@ -307,7 +307,7 @@ export default function ColorCodedCell({
                     right: "-2px",
                     bottom: "-2px",
                     borderRadius: "50%",
-                    border: `2px solid ${colors.interpolatedColor}`,
+                    border: `2px solid ${color}`,
                     opacity: 0.3,
                     animation: "pulse 2s infinite",
                   },
@@ -362,7 +362,7 @@ export default function ColorCodedCell({
                 right: 0,
                 width: "4px",
                 height: "100%",
-                backgroundColor: colors.interpolatedColor,
+                backgroundColor: color,
                 borderRadius: "2px 0 0 2px",
               } : {},
               "&::after": value ? {
@@ -372,7 +372,7 @@ export default function ColorCodedCell({
                 left: 0,
                 right: "4px",
                 height: "2px",
-                backgroundColor: `${colors.interpolatedColor}${opacity.bg}`,
+                backgroundColor: `${color}${opacity.bg}`,
               } : {},
             }}>
             {getIcon()}
@@ -405,7 +405,7 @@ export default function ColorCodedCell({
                 sx={{
                   width: "8px",
                   height: "8px",
-                  backgroundColor: colors.interpolatedColor,
+                  backgroundColor: color,
                   transform: "rotate(45deg)",
                   flexShrink: 0,
                 }}
@@ -447,7 +447,7 @@ export default function ColorCodedCell({
                 transform: "translateX(-50%)",
                 width: "60%",
                 height: "2px",
-                backgroundColor: colors.interpolatedColor,
+                backgroundColor: color,
                 borderRadius: "1px",
               } : {}
             }}>
@@ -493,7 +493,7 @@ export default function ColorCodedCell({
                     top: 0,
                     height: "100%",
                     width: "70%",
-                    backgroundColor: colors.interpolatedColor,
+                    backgroundColor: color,
                     borderRadius: "2px",
                     transition: "width 0.3s ease",
                   }}
@@ -533,7 +533,7 @@ export default function ColorCodedCell({
               <Circle
                 sx={{
                   fontSize: 8,
-                  color: colors.interpolatedColor,
+                  color: color,
                 }}
               />
             )}
