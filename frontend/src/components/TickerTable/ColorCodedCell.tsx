@@ -40,8 +40,9 @@ export default function ColorCodedCell({
   };
 
   const opacity = getOpacity();
-  const displayValue = formatValue ? value?.toFixed(2) : value?.toString();
+  const displayValue = formatValue ? value ? value.toFixed(2) : null: value?.toString();
   const finalValue = `${prefix}${displayValue || "—"}${suffix}`;
+  console.log("Rendering ColorCodedCell with value:", value, "and color:", color);
 
   const getIcon = () => {
     if (!showIcon || !value) return undefined;
@@ -166,7 +167,7 @@ export default function ColorCodedCell({
               alignItems: "center",
               justifyContent: "flex-end",
             }}>
-            {value ? (
+            {value && value != undefined && value != null ? (
               <Chip
                 label={finalValue}
                 size="small"

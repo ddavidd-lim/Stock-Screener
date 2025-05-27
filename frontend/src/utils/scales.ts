@@ -38,16 +38,6 @@ function calculateScale(
   thresholds: number[],
   direction: "asc" | "desc" = "asc"
 ): string {
-  // For ascending: lower values are better (green), higher values are worse (red)
-  // For descending: higher values are better (green), lower values are worse (red)
-  console.log(
-    "Calculating scale for value:",
-    value,
-    "with thresholds:",
-    thresholds,
-    "and direction:",
-    direction
-  );
   const isAscending = direction === "asc";
 
   if (isAscending) {
@@ -186,8 +176,11 @@ export const betaThresholds: ThresholdDefinition = {
 };
 
 export function evaluateColorTier(metric: string, value: number): string {
-  if (value < 0 || value === null || value === undefined) {
-    return "#000000"; // black for negative values
+  if (metric === "ROE") {
+    console.log("--Evaluating ROE with value:", value);
+  }
+  if (value === null || value === undefined || value < 0) {
+    return "transparent"; // black for invalid values
   }
   const thresholds = getThresholds(metric);
   const { excellent, good, poor, direction } = thresholds;
