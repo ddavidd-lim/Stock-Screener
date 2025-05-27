@@ -21,6 +21,7 @@ import {
   CircularProgress,
   ButtonGroup,
   Button,
+  Chip,
 } from "@mui/material";
 
 import {
@@ -54,6 +55,10 @@ interface TickerData {
   trailingPegRatio: number;
   priceToSalesTrailing12Months: number;
   priceToBook: number;
+  returnOnEquity: number;
+  returnOnAssets: number;
+  enterpriseToRevenue: number;
+  enterpriseToEbitda: number;
   trailingAnnualDividendYield: number;
   payoutRatio: number;
   debtToEquity: number;
@@ -114,7 +119,7 @@ export default function TickerTable() {
     queryKey: ["tickerData", tickerSymbols],
     queryFn: async () => {
       const tickers = tickerSymbols.join(",");
-      console.log("Fetching data for ticker symbols:", tickers);
+      // console.log("Fetching data for ticker symbols:", tickers);
       if (tickers.length === 0) {
         return [];
       }
@@ -124,6 +129,7 @@ export default function TickerTable() {
     },
     retry: false,
     enabled: !initialLoad.current, // Disable the query on initial load
+    refetchOnWindowFocus: false, // Disable refetching on window focus
   });
 
   const mutation = useMutation({
@@ -137,8 +143,8 @@ export default function TickerTable() {
 
   const updateTab = (queryData: TickerData[], tabIndex: number, tabs: TabData[]) => {
     // Update tabs with new ticker queryData
-    console.log("Updating tab with query data:", queryData, "for tab index:", tabIndex);
-    console.log("Current tabs before update:", tabs);
+    // console.log("Updating tab with query data:", queryData, "for tab index:", tabIndex);
+    // console.log("Current tabs before update:", tabs);
     const updatedTabs = tabs.map((tab) =>
       tab.index === tabIndex
         ? { ...tab, tickers: queryData.map((ticker: TickerData) => ticker.symbol) }
@@ -151,7 +157,7 @@ export default function TickerTable() {
   // PROCESS: query data
   useEffect(() => {
     if (query.isSuccess) {
-      console.log("Query success:", query.data);
+      // console.log("Query success:", query.data);
 
       updateTab(query.data, currentTabIndex, tabs);
       setTickerData(query.data);
@@ -160,7 +166,7 @@ export default function TickerTable() {
 
   // LOCAL STORAGE: mount data from localStorage on component mount
   useEffect(() => {
-    console.log("Component mounted, loading tabs from localStorage");
+    // console.log("Component mounted, loading tabs from localStorage");
     setCurrentTabIndex(0); // Reset to the first tab on mount
     const storedTabs = retrieveList("tickerTabs") as unknown as TabData[];
 
@@ -170,7 +176,7 @@ export default function TickerTable() {
         index: typeof tab.index === "number" ? tab.index : 0,
         tickers: Array.isArray(tab.tickers) ? tab.tickers : [],
       }));
-      console.log("Parsed tabs from localStorage:", parsedTabs);
+      // console.log("Parsed tabs from localStorage:", parsedTabs);
 
       setTabs(parsedTabs);
 
@@ -194,7 +200,7 @@ export default function TickerTable() {
 
   // -- Handle deleting row
   const handleDeleteRow = (index: number) => {
-    console.log(`Deleting row ${index}: ${tickerSymbols[index]}`);
+    // console.log(`Deleting row ${index}: ${tickerSymbols[index]}`);
     const updatedTickerSymbols = tickerSymbols.filter((_, tickerIndex) => tickerIndex != index);
     if (updatedTickerSymbols.length == 0) {
       updateTab([], currentTabIndex, tabs);
@@ -231,7 +237,7 @@ export default function TickerTable() {
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     // Load tickers for the selected tab
     const selectedTab = tabs.find((tab) => tab.index === newValue);
-    console.log("Switching to tab: ", selectedTab);
+    // console.log("Switching to tab: ", selectedTab);
     if (selectedTab) {
       const tickersToFetch = selectedTab.tickers;
 
@@ -388,6 +394,18 @@ export default function TickerTable() {
                     row.priceToSalesTrailing12Months
                   );
                   const priceToBookColors = scales.generateScale("P/B", row.priceToBook);
+                  const roeColors = scales.generateScale("ROE", row.returnOnEquity);
+                  const roaColors = scales.generateScale("ROA", row.returnOnAssets);
+                  const enterpriseToRevenueColors = scales.generateScale(
+                    "EV/Revenue",
+                    row.enterpriseToRevenue
+                  );
+                  const enterpriseToEbitdaColors = scales.generateScale(
+                    "EV/EBITDA",
+                    row.enterpriseToEbitda
+                  );
+                  console.log("Enterprise to Ebitda:", row.enterpriseToEbitda);
+                  console.log("Colors:", enterpriseToEbitdaColors);
                   // const dividendYieldColors = scales.generateScale(
                   //   "Dividend Yield",
                   //   row.trailingAnnualDividendYield
@@ -408,8 +426,20 @@ export default function TickerTable() {
                       <TickerNameCell
                         tickerName={row.shortName}
                         tickerSymbol={row.symbol}></TickerNameCell>
-                      <TableCell align="right">{row.symbol}</TableCell>
-                      <TableCell align="right">{row.currentPrice}</TableCell>
+                      <TableCell align="right">
+                        <Chip
+                          label={row.symbol}
+                          variant="outlined"
+                          size="medium"
+                          sx={{ textTransform: "uppercase" }}></Chip>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Chip
+                          label={row.currentPrice.toFixed(2)}
+                          variant="outlined"
+                          size="medium"
+                          sx={{ textTransform: "uppercase" }}></Chip>
+                      </TableCell>
                       <ColorCodedCell value={row.trailingPE} colors={peColors} />
                       <ColorCodedCell value={row.trailingPegRatio} colors={pegColors} />
                       <ColorCodedCell
@@ -417,14 +447,32 @@ export default function TickerTable() {
                         colors={priceToSalesColors}
                       />
                       <ColorCodedCell value={row.priceToBook} colors={priceToBookColors} />
+                      <ColorCodedCell value={row.returnOnEquity} colors={roeColors} />
+                      <ColorCodedCell value={row.returnOnAssets} colors={roaColors} />
+                      <ColorCodedCell
+                        value={row.enterpriseToRevenue}
+                        colors={enterpriseToRevenueColors}
+                      />
+                      <ColorCodedCell
+                        value={row.enterpriseToEbitda}
+                        colors={enterpriseToEbitdaColors}
+                      />
                       {/* <ColorCodedCell
               value={row.trailingAnnualDividendYield}
               colors={dividendYieldColors}
             /> */}
                       {/* <ColorCodedCell value={row.payoutRatio} colors={payoutRatioColors} /> */}
-                      <ColorCodedCell value={row.debtToEquity} colors={debtToEquityColors} variant="segment"/>
-                      <ColorCodedCell value={row.currentRatio} colors={currentRatioColors} variant="pulse" />
-                      <ColorCodedCell value={row.beta} colors={betaColors} variant="pulse"/>
+                      <ColorCodedCell
+                        value={row.debtToEquity}
+                        colors={debtToEquityColors}
+                        variant="segment"
+                      />
+                      <ColorCodedCell
+                        value={row.currentRatio}
+                        colors={currentRatioColors}
+                        variant="pulse"
+                      />
+                      <ColorCodedCell value={row.beta} colors={betaColors} variant="pulse" />
                       <TableCell align="right">
                         <IconButton color="error" onClick={() => handleDeleteRow(index)}>
                           <CloseIcon />

@@ -2,22 +2,40 @@ export const headerData = [
   { tooltip: "The current trading price of the stock", headerTitle: "Current Price" },
   {
     tooltip:
-      "Price-to-Earnings ratio, a valuation metric for determining the relative value of a company's shares",
+      "Compares a company's current share price to its earnings per share (EPS), using net income",
     headerTitle: "P/E",
   },
   {
     tooltip:
-      "Price/Earnings to Growth ratio, used to determine a stock's value while taking the company's earnings growth into account",
+      "Used to determine a stock's value while taking the company's earnings growth into account",
     headerTitle: "PEG",
   },
   {
     tooltip:
-      "Price-to-Sales ratio, a valuation ratio that compares a company's stock price to its revenues",
+      "Compares stock price to its revenues",
     headerTitle: "P/S",
   },
   {
-    tooltip: "Price-to-Book ratio, used to compare a firm's market value to its book value",
+    tooltip: "Compares a company's stock price to it's true value (book value)",
     headerTitle: "P/B",
+  },
+  {
+    tooltip: "Measures how well a company uses investments to generate income",
+    headerTitle: "ROE",
+  },
+  {
+    tooltip: "Indicates how profitable a company is relative to its total assets",
+    headerTitle: "ROA",
+  },
+  {
+    tooltip:
+      "Compares the value of a company, debt and cash, to its revenue. Useful for non-profitable companies (growth, startups)",
+    headerTitle: "EV/Revenue",
+  },
+  {
+    tooltip:
+      "Compares the value of a company, debt and cash, to its Earnings Before Interest, Taxes, Depreciation, and Amortization",
+    headerTitle: "EV/EBITDA",
   },
   // {
   //   tooltip:
@@ -30,16 +48,16 @@ export const headerData = [
   // },
   {
     tooltip:
-      "Debt-to-Equity ratio, a measure of a company's financial leverage calculated by dividing its total liabilities by stockholders' equity",
+      "Measures a company's financial leverage calculated by dividing its total liabilities by stockholders' equity",
     headerTitle: "Debt/Equity",
   },
   {
     tooltip:
-      "Current ratio, a liquidity ratio that measures a company's ability to pay short-term obligations",
+      "Ratio that measures a company's ability to pay short-term obligations",
     headerTitle: "Current Ratio",
   },
   {
-    tooltip: "Beta, a measure of a stock's volatility in relation to the overall market",
+    tooltip: "Measures a stock's volatility in relation to the overall market",
     headerTitle: "Beta",
   },
 ];

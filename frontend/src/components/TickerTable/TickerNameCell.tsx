@@ -54,12 +54,12 @@ export default function TickerNameCell(props: TickerProps) {
             flexDirection: "column",
             alignItems: "flex-end",
             padding: 1,
-            width: "800px",
+            width: "100dvh",
             height: "450px",
           }}>
           <Box sx={{ alignSelf: "flex-end" }} width={"100%"}>
             <Stack direction="row" spacing={1} justifyContent={"space-between"} width={"100%"}>
-              <Link href={`https://finance.yahoo.com/quote/${props.tickerSymbol}`}>
+              <Link href={`https://finance.yahoo.com/quote/${props.tickerSymbol}`} target="_blank" rel="noopener noreferrer">
                 {props.tickerSymbol} on Yahoo Finance
               </Link>
               <Typography

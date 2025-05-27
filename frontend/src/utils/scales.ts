@@ -1,7 +1,6 @@
 const greenScale = ["#004d00", "#007a33", "#00b86b"]; // dark green → medium green → light green
 const yellowScale = ["#a3cc00", "#ffd000", "#ffa000"]; // gold → orange → dark orange
-const redScale = ["#ff5c00", "#d10000", "#8b0000"];    // orange-red → crimson → dark red
-
+const redScale = ["#ff5c00", "#d10000", "#8b0000"]; // orange-red → crimson → dark red
 
 // const greenScale = ["#006400", "#00A550", "#00FF7F"]; // dark green → medium green → light green
 // const yellowScale = ["#FFD700", "#FFA500", "#FF8C00"]; // gold → orange → dark orange
@@ -71,16 +70,16 @@ export const roaThresholds = { excellent: 5, good: 10, poor: 15 };
 export const evToRevenueThresholds = { excellent: 1, good: 3, poor: 5 };
 export const evToEbitdaThresholds = { excellent: 8, good: 10, poor: 12 };
 
-function generateScale(
+export function generateScale(
   metric: string,
   value: number
 ): { interpolatedColor: string; basicColor: string } {
   const thresholds = getThresholds(metric);
   const thresholdValues = Object.values(thresholds) as number[];
+  console.log("Thresholds for metric:", metric, thresholdValues);
   return calculateScale(value, thresholdValues);
 }
 
-export { generateScale };
 export function getThresholds(metric: string) {
   switch (metric) {
     case "P/E":
