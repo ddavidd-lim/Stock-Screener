@@ -35,15 +35,14 @@ async def ticker(request: Request):
     tickers_data = []
 
     data = yf.Tickers(ticker_symbols)
-    print("data", data)
-    print("data.tickers", data.tickers)
     for ticker_data in data.tickers.values():
         try:
             ticker_info = ticker_data.info
             tickers_data.append(ticker_info)
+            print(f"Fetched data for ticker: {ticker_info.get('symbol', 'Unknown')}")
         except Exception as e:
             pass
-
+    print("Successfully fetched data for tickers:", ticker_symbols)
     return tickers_data
 
 
