@@ -11,13 +11,10 @@ app = FastAPI()
 # Allow CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "https://stock-screener-jtkk4l5ds-ddavidd-lims-projects.vercel.app",
-    ],  # Allows all origins
+    allow_origin_regex=r"^https?:\/\/(localhost:5173|stock-screener-[a-z0-9]+-ddavidd-lims-projects\.vercel\.app)$",
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/stock")
