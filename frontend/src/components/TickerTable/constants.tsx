@@ -1,5 +1,4 @@
 export const headerData = [
-  { tooltip: "The current trading price of the stock", headerTitle: "Current Price" },
   {
     tooltip:
       "Compares a company's current share price to its earnings per share (EPS), using net income",

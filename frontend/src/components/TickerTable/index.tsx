@@ -21,7 +21,6 @@ import {
   CircularProgress,
   ButtonGroup,
   Button,
-  Chip,
 } from "@mui/material";
 
 import {
@@ -211,13 +210,11 @@ export default function TickerTable() {
 
   // -- Handle changing tabs
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    // Load tickers for the selected tab
+    // Grab new list of tickers from the selected tab
     const selectedTab = tabs.find((tab) => tab.index === newValue);
-    // console.log("Switching to tab: ", selectedTab);
     if (selectedTab) {
       const tickersToFetch = selectedTab.tickers;
 
-      // Fetch missing tickers
       setTickerSymbols(tickersToFetch);
       setCurrentTabIndex(newValue);
     }
@@ -344,8 +341,7 @@ export default function TickerTable() {
             <TableHead>
               <TableRow>
                 <TableCell></TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Ticker</TableCell>
+                <TableCell align="center">Name</TableCell>
                 {headerData.map((data, index) => {
                   return data.headerTitle === "Current Price" ? (
                     <TableCell key={index}>{data.headerTitle}</TableCell>
@@ -421,21 +417,8 @@ export default function TickerTable() {
                       </TableCell>
                       <TickerNameCell
                         tickerName={row.shortName}
-                        tickerSymbol={row.symbol}></TickerNameCell>
-                      <TableCell align="right">
-                        <Chip
-                          label={row.symbol}
-                          variant="outlined"
-                          size="medium"
-                          sx={{ textTransform: "uppercase" }}></Chip>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Chip
-                          label={row.currentPrice?.toFixed(2)}
-                          variant="outlined"
-                          size="medium"
-                          sx={{ textTransform: "uppercase" }}></Chip>
-                      </TableCell>
+                        tickerSymbol={row.symbol}
+                        tickerPrice={row.currentPrice}></TickerNameCell>
                       <ColorCodedCell value={row.trailingPE} color={peColor} />
                       <ColorCodedCell value={row.trailingPegRatio} color={pegColor} />
                       <ColorCodedCell
