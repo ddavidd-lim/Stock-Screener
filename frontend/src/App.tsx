@@ -5,6 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { theme as darkTheme } from "./constants/themes";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes/index";
+import { MobileProvider } from "./hooks/MobileProvider";
 
 const queryClient = new QueryClient();
 
@@ -13,7 +14,9 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline enableColorScheme />
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <MobileProvider>
+          <RouterProvider router={router} />
+        </MobileProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

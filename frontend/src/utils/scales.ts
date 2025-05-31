@@ -145,10 +145,10 @@ export const evToEbitdaThresholds: ThresholdDefinition = {
   direction: "asc",
 };
 export const currentRatioThresholds: ThresholdDefinition = {
-  excellent: 1,
-  good: 2,
-  poor: 3,
-  direction: "desc",
+  excellent: 1.5,
+  good: 3,
+  poor: 5,
+  direction: "asc",
 };
 export const dividendYieldThresholds: ThresholdDefinition = {
   excellent: 4,

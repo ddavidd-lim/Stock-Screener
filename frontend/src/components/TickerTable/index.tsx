@@ -48,6 +48,7 @@ import TickerNameCell from "./TickerNameCell";
 import { importFromJson, exportToJson } from "../../utils/import";
 
 import API_BASE_URL from "../../utils/api";
+import { useIsMobile } from "../../hooks/MobileContext";
 
 interface TickerData {
   shortName: string;
@@ -74,31 +75,9 @@ type TabData = {
   tickers: string[];
 };
 
-/**
- * The main component of the application that fetches and displays financial data in a table format.
- *
- * @component
- *
- * @typedef {Object} TickerData
- * @property {string} shortName - The short name or ticker symbol of the stock.
- * @property {number} currentPrice - The current trading price of the stock.
- * @property {number} PE - The Price-to-Earnings ratio, a valuation metric for determining the relative value of a company's shares.
- * @property {number} PEG - The Price/Earnings to Growth ratio, used to determine a stock's value while taking the company's earnings growth into account.
- * @property {number} priceToSales - The Price-to-Sales ratio, a valuation ratio that compares a company's stock price to its revenues.
- * @property {number} priceToBook - The Price-to-Book ratio, used to compare a firm's market value to its book value.
- * @property {number} dividendYield - The dividend yield, a financial ratio that shows how much a company pays out in dividends each year relative to its stock price.
- * @property {number} payoutRatio - The payout ratio, the proportion of earnings paid out as dividends to shareholders.
- * @property {number} debtToEquity - The Debt-to-Equity ratio, a measure of a company's financial leverage calculated by dividing its total liabilities by stockholders' equity.
- * @property {number} currentRatio - The current ratio, a liquidity ratio that measures a company's ability to pay short-term obligations.
- * @property {number} beta - The beta, a measure of a stock's volatility in relation to the overall market.
- *
- * @returns {JSX.Element} The rendered component.
- *
- * @example
- * <TickerTable />
- */
 export default function TickerTable() {
   // const queryClient = useQueryClient();
+  const isMobile = useIsMobile();
 
   const [tickerSearch, setTickerSearch] = useState<string>("");
   const [tickerSymbols, setTickerSymbols] = useState<string[]>([]);
@@ -138,15 +117,11 @@ export default function TickerTable() {
     mutationFn: async (tabs: object[]) => {
       storeList("tickerTabs", tabs);
     },
-    onSuccess: () => {
-      // query.refetch();
-    },
+    onSuccess: () => {},
   });
 
   const updateTab = (queryData: TickerData[], tabIndex: number, tabs: TabData[]) => {
     // Update tabs with new ticker queryData
-    // console.log("Updating tab with query data:", queryData, "for tab index:", tabIndex);
-    // console.log("Current tabs before update:", tabs);
     const updatedTabs = tabs.map((tab) =>
       tab.index === tabIndex
         ? { ...tab, tickers: queryData.map((ticker: TickerData) => ticker.symbol) }
@@ -202,7 +177,6 @@ export default function TickerTable() {
 
   // -- Handle deleting row
   const handleDeleteRow = (index: number) => {
-    // console.log(`Deleting row ${index}: ${tickerSymbols[index]}`);
     const updatedTickerSymbols = tickerSymbols.filter((_, tickerIndex) => tickerIndex != index);
     if (updatedTickerSymbols.length == 0) {
       updateTab([], currentTabIndex, tabs);
@@ -225,7 +199,7 @@ export default function TickerTable() {
     setTabs(updatedTabs);
 
     setCurrentTabIndex(newTab.index);
-    setTickerSymbols([]); // Clear ticker symbols when adding a new tab
+    setTickerSymbols([]);
   };
 
   // -- Handle deleting a tab
@@ -260,25 +234,28 @@ export default function TickerTable() {
         gap: 2,
       }}>
       <Stack direction={"row"}>
-        <TextField
-          id="contained"
-          label="Search Ticker"
-          placeholder="NVDA,AAPL,GOOGL"
-          variant="outlined"
-          value={tickerSearch}
-          onChange={(event) => setTickerSearch(event.target.value)}
-          onKeyDown={handleAddTicker}
-          sx={{ width: "auto", minWidth: 100 }}
-        />
+        {!isMobile && (
+          <TextField
+            id="contained"
+            label="Search Ticker"
+            placeholder="NVDA,AAPL,GOOGL"
+            variant="outlined"
+            value={tickerSearch}
+            onChange={(event) => setTickerSearch(event.target.value)}
+            onKeyDown={handleAddTicker}
+            sx={{ width: "auto", minWidth: 125 }}
+          />
+        )}
+
         <Tabs
           value={tabs.findIndex((tab) => tab.index === currentTabIndex)}
           scrollButtons="auto"
-          allowScrollButtonsMobile
           variant="scrollable">
           {tabs.map((tab) => (
             <Tab
               key={tab.index}
               label={tab.label}
+              sx={{ textTransform: isMobile ? "none" : null }}
               onClick={(event) => {
                 handleTabChange(event, tab.index);
               }}
@@ -514,6 +491,18 @@ export default function TickerTable() {
           style={{ display: "none" }}
           onChange={(e) => importFromJson(e, setTabs)}
         />
+        {isMobile && (
+          <TextField
+            id="contained"
+            label="Search Ticker"
+            placeholder="NVDA,AAPL,GOOGL"
+            variant="outlined"
+            value={tickerSearch}
+            onChange={(event) => setTickerSearch(event.target.value)}
+            onKeyDown={handleAddTicker}
+            sx={{ width: "auto", minWidth: 100 }}
+          />
+        )}
         <ButtonGroup variant="text" orientation="horizontal">
           <Button
             onClick={() => {
