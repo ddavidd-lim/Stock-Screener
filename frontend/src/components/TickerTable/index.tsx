@@ -410,8 +410,10 @@ export default function TickerTable() {
 
                   return (
                     <TableRow key={index}>
-                      <TableCell align="right">
-                        <IconButton color="error" onClick={() => handleDeleteRow(index)}>
+                      <TableCell align="right" size="small" sx={{ width: "4", padding: 0, pl: isMobile ? 0 : 1 }}>
+                        <IconButton
+                          color="error"
+                          onClick={() => handleDeleteRow(index)}>
                           <CloseIcon />
                         </IconButton>
                       </TableCell>
