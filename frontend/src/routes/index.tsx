@@ -1,6 +1,6 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import Layout from "../components/layout";
 import TickerTable from "../components/TickerTable";
+import Layout from "../components/Layout";
 
 const router = createBrowserRouter([
   {
