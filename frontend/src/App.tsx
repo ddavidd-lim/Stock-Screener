@@ -1,15 +1,10 @@
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import TickerTable from "./components/TickerTable";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Box } from "@mui/material";
-
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-});
+import { theme as darkTheme } from "./constants/themes";
+import { RouterProvider } from "react-router-dom";
+import router from "./routes/index";
 
 const queryClient = new QueryClient();
 
@@ -18,18 +13,7 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline enableColorScheme />
       <QueryClientProvider client={queryClient}>
-        <Box
-          sx={{
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            position: "relative",
-          }}>
-          {/* Table takes remaining space */}
-          <Box sx={{ flex: 1, overflow: "hidden" }}>
-            <TickerTable />
-          </Box>
-        </Box>
+        <RouterProvider router={router} />
       </QueryClientProvider>
     </ThemeProvider>
   );

@@ -253,13 +253,13 @@ export default function TickerTable() {
     <Box
       sx={{
         display: "flex",
+        flexGrow: 1,
         flexDirection: "column",
-        height: "100%",
-        boxSizing: "border-box",
+        overflow: "hidden",
         padding: 2,
         gap: 2,
       }}>
-      <Stack direction={"row"} sx={{ width: "auto", height: "auto" }}>
+      <Stack direction={"row"}>
         <TextField
           id="contained"
           label="Search Ticker"
@@ -268,7 +268,7 @@ export default function TickerTable() {
           value={tickerSearch}
           onChange={(event) => setTickerSearch(event.target.value)}
           onKeyDown={handleAddTicker}
-          sx={{ width: "auto" }}
+          sx={{ width: "auto", minWidth: 100 }}
         />
         <Tabs
           value={tabs.findIndex((tab) => tab.index === currentTabIndex)}
@@ -286,12 +286,12 @@ export default function TickerTable() {
           ))}
         </Tabs>
         <IconButton
-          sx={{ width: 50, height: 50 }}
+          sx={{ width: "auto", height: "auto" }}
           onClick={(event) => handlePopoverOpen(event, "add")}>
           <BookmarkAddIcon />
         </IconButton>
         <IconButton
-          sx={{ width: 50, height: 50 }}
+          sx={{ width: "auto", height: "auto" }}
           onClick={(event) => handlePopoverOpen(event, "remove")}>
           <BookmarkRemoveIcon />
         </IconButton>
