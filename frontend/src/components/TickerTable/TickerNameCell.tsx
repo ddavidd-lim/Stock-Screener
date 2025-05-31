@@ -42,16 +42,6 @@ export default function TickerNameCell(props: TickerProps) {
           border: "1px solid",
           borderColor: "divider",
           backgroundColor: "background.paper",
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "2px",
-            backgroundColor: "success.main",
-            transition: "transform 0.3s ease",
-          },
           "&:hover": {
             borderColor: "success.main",
             backgroundColor: "action.hover",
