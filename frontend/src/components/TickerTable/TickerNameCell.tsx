@@ -101,7 +101,7 @@ export default function TickerNameCell(props: TickerProps) {
                 textTransform: "uppercase",
                 width: "fit-content",
               }}>
-              {tickerPrice.toLocaleString("en-US", {
+              {tickerPrice?.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
                 minimumFractionDigits: 2,
