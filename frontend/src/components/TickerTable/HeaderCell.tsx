@@ -36,7 +36,7 @@ export default function HeaderCell({ headerTitle, tooltip }: HeaderData) {
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
         variant="subtitle2">
-        {headerTitle}
+        {headerTitle}  
       </Typography>
       <Popover
         id="mouse-over-popover"

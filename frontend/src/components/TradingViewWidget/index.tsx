@@ -3,7 +3,8 @@ import { useEffect, useRef, memo } from "react";
 
 type TradingViewWidgetProps = {
   tickerSymbol?: string;
-}
+  timeRange?: string;
+};
 
 function TradingViewWidget(props: TradingViewWidgetProps) {
   const container = useRef<HTMLDivElement>(null);
@@ -23,7 +24,7 @@ function TradingViewWidget(props: TradingViewWidgetProps) {
         {
           "autosize": true,
           "symbol": "${props.tickerSymbol}",
-          "range": "1Y",
+          "range": "${props.timeRange || "1D"}",
           "interval": "D",
           "timezone": "Etc/UTC",
           "theme": "dark",
@@ -41,7 +42,6 @@ function TradingViewWidget(props: TradingViewWidgetProps) {
       className="tradingview-widget-container"
       ref={container}
       style={{ height: "100%", width: "100%" }}>
-      
       <div
         className="tradingview-widget-container__widget"
         style={{ height: "calc(100% - 32px)", width: "100%" }}></div>

@@ -75,13 +75,13 @@ export default function ColorCodedCell({
           <Box
             sx={{
               padding: "8px 12px",
-              minHeight: "36px",
+              minHeight: "54px",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               gap: 1,
               position: "relative",
-              backgroundColor: value ? `${color}08` : "transparent",
+              backgroundColor: value ? `${color}70` : "transparent",
               borderRadius: "6px",
               "&::before": value
                 ? {
@@ -99,7 +99,7 @@ export default function ColorCodedCell({
                 : {},
               transition: "all 0.2s ease",
               "&:hover": {
-                backgroundColor: value ? `${color}60` : "transparent",
+                backgroundColor: value ? `${color}99` : "transparent",
               },
             }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, ml: 2 }}>

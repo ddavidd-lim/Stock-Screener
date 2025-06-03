@@ -12,7 +12,7 @@ export default function Layout() {
         justifyContent: "center",
         minWidth: "100vw",
       }}>
-      <Header />
+      {/* <Header /> */}
       <Outlet />
     </Box>
   );

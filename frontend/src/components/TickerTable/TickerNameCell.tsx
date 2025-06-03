@@ -7,6 +7,7 @@ type TickerProps = {
   tickerName: string;
   tickerSymbol: string;
   tickerPrice: number;
+  timeRange: string;
 };
 
 export default function TickerNameCell(props: TickerProps) {
@@ -15,7 +16,7 @@ export default function TickerNameCell(props: TickerProps) {
 
   const isMobile = useIsMobile();
 
-  const { tickerName, tickerSymbol, tickerPrice } = props;
+  const { tickerName, tickerSymbol, tickerPrice, timeRange } = props;
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -203,7 +204,7 @@ export default function TickerNameCell(props: TickerProps) {
               position: "relative",
               overflow: "hidden",
             }}>
-            <TradingViewWidget tickerSymbol={props.tickerSymbol} />
+            <TradingViewWidget tickerSymbol={props.tickerSymbol} timeRange={timeRange}/>
           </Box>
         </Box>
       </Popover>
