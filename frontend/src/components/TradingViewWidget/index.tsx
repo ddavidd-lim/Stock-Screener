@@ -23,7 +23,7 @@ function TradingViewWidget(props: TradingViewWidgetProps) {
         {
           "autosize": true,
           "symbol": "${props.tickerSymbol}",
-          "range": "1M",
+          "range": "1Y",
           "interval": "D",
           "timezone": "Etc/UTC",
           "theme": "dark",
