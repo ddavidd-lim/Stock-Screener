@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:backend": "cd backend && uvicorn main:app --app-dir src --reload --host 0.0.0.0 --port 8000",
+    "dev:frontend": "pnpm --filter frontend dev"
+  }
+}

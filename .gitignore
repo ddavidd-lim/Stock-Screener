@@ -1,0 +1,63 @@
+########################################
+# OS / Editor
+########################################
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+
+########################################
+# Environment variables
+########################################
+.env
+.env.*
+!.env.example
+
+########################################
+# Node / pnpm
+########################################
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+.pnpm-workspace-state-v1.json
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+########################################
+# Python
+########################################
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+########################################
+# Backend-specific (FastAPI / Uvicorn)
+########################################
+*.log
+
+########################################
+# Docker
+########################################
+docker-compose.override.yml
+
+########################################
+# Cloud / CI artifacts
+########################################
+*.pem
+*.key
+gcp-key.json
