@@ -17,6 +17,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.get("/health")
+async def health_check(request: Request):
+    return "OK"
+
+
 @app.get("/stock")
 async def ticker(request: Request):
     print("/stock")
