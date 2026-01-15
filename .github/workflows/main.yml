@@ -22,7 +22,7 @@ jobs:
       - uses: google-github-actions/auth@v3
         with:
           project_id: 'david-web-app-development'
-          workload_identity_provider: 'projects/555157153482/locations/global/workloadIdentityPools/github-actions/providers/github-stock-screener'
+          workload_identity_provider: 'projects/555157153482/locations/global/workloadIdentityPools/github-ddavidd-lim/providers/github-stock-screener'
 
       # Install Node
       - uses: actions/setup-node@v3
