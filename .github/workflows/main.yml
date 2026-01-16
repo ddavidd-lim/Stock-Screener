@@ -23,7 +23,6 @@ jobs:
         with:
           project_id: 'david-web-app-development'
           workload_identity_provider: 'projects/555157153482/locations/global/workloadIdentityPools/github-ddavidd-lim/providers/github-stock-screener'
-          service_account: 'github-actions@david-web-app-development.iam.gserviceaccount.com'
 
       # Install Node
       - uses: actions/setup-node@v3
@@ -43,8 +42,8 @@ jobs:
 
       # Deploy to Cloud Storage
       - run: |
-          gsutil -m rsync -r frontend/dist gs://my-frontend-bucket
-          gsutil -m acl set -R -a public-read gs://my-frontend-bucket
+          gcloud gsutil -m rsync -r frontend/dist gs://my-frontend-bucket
+          gcloud gsutil -m acl set -R -a public-read gs://my-frontend-bucket
 
   backend:
     name: Deploy Backend
