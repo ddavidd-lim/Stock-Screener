@@ -76,6 +76,6 @@ jobs:
           gcloud run deploy stock-screener-backend \
             --image us-west2-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest \
             --region us-west2 \
-            --service_account cloud-run-backend@david-web-app-development.iam.gserviceaccount.com \
+            --service_-account cloud-run-backend@david-web-app-development.iam.gserviceaccount.com \
             --platform managed \
             --allow-unauthenticated
