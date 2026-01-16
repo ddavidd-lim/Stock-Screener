@@ -62,16 +62,16 @@ jobs:
       # Build Docker image
       - run: |
           cd backend
-          docker build -t us-central1-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest .
+          docker build -t us-west2-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest .
 
       # Push to Artifact Registry
       - run: |
-          docker push us-central1-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest
+          docker push us-west2-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest
 
       # Deploy to Cloud Run
       - run: |
           gcloud run deploy stock-screener-backend \
-            --image us-central1-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest \
-            --region us-central1 \
+            --image us-west2-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest \
+            --region us-west2 \
             --platform managed \
             --allow-unauthenticated
