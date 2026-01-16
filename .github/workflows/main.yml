@@ -43,8 +43,7 @@ jobs:
 
       # Deploy to Cloud Storage
       - run: |
-          gsutil -m rsync -r frontend/dist gs://my-frontend-bucket
-          gsutil -m acl set -R -a public-read gs://my-frontend-bucket
+          gcloud storage rsync --recursive frontend/dist gs://wavidwim.com
 
   backend:
     name: Deploy Backend
