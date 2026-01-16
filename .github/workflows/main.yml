@@ -42,8 +42,8 @@ jobs:
 
       # Deploy to Cloud Storage
       - run: |
-          gsutil -m rsync -r frontend/dist gs://wavidwim.com
-          gsutil -m acl set -R -a public-read gs://wavidwim.com
+          gcloud storage rsync -r frontend/dist gs://wavidwim.com
+          gcloud storage objects update --all gs://wavidwim.com --acl=publicRead
 
   backend:
     name: Deploy Backend
