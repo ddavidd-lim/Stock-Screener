@@ -64,6 +64,9 @@ jobs:
           cd backend
           docker build -t us-west2-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest .
 
+      # Authenticate Docker
+      - run: gcloud auth configure-docker us-west2-docker.pkg.dev
+
       # Push to Artifact Registry
       - run: |
           docker push us-west2-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest
