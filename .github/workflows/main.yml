@@ -34,13 +34,19 @@ jobs:
         with:
           version: 9
 
+      - name: Save environment variables
+        run:
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > frontend/.env.production
+
+      - name: Test environment variables
+        run:
+          cat frontend/.env.production
+
       - name: Build frontend
         run: |
           cd frontend
           pnpm install --frozen-lockfile
           pnpm run build
-        env: 
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Deploy to Cloud Storage
         run: |
