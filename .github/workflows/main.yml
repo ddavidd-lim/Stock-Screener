@@ -13,36 +13,37 @@ jobs:
   frontend:
     name: Deploy Frontend
     runs-on: ubuntu-latest
-    env:
-      VITE_API_URL: ${{ secrets.VITE_API_URL }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Authenticate to GCP
-      - uses: google-github-actions/auth@v3
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v3
         with:
           project_id: 'david-web-app-development'
           workload_identity_provider: 'projects/555157153482/locations/global/workloadIdentityPools/github-ddavidd-lim/providers/github-stock-screener'
           service_account: 'github-actions@david-web-app-development.iam.gserviceaccount.com'
-
-      # Install Node
-      - uses: actions/setup-node@v3
+      
+      - name: Install Node
+        uses: actions/setup-node@v3
         with:
           node-version: 22
-
-      # Install pnpm
-      - uses: pnpm/action-setup@v3
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
         with:
           version: 9
 
-      # Build frontend
-      - run: |
+      - name: Build frontend
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        run: |
           cd frontend
           pnpm install --frozen-lockfile
           pnpm run build
 
-      # Deploy to Cloud Storage
-      - run: |
+      - name: Deploy to Cloud Storage
+        run: |
           gcloud storage rsync --recursive frontend/dist gs://wavidwim.com
 
   backend:
@@ -50,29 +51,30 @@ jobs:
     runs-on: ubuntu-latest
     needs: frontend   # wait for frontend first
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Authenticate to GCP
-      - uses: google-github-actions/auth@v3
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v3
         with:
           project_id: 'david-web-app-development'
           workload_identity_provider: 'projects/555157153482/locations/global/workloadIdentityPools/github-ddavidd-lim/providers/github-stock-screener'
           service_account: 'github-actions@david-web-app-development.iam.gserviceaccount.com'
 
-      # Build Docker image
-      - run: |
+      - name: Build Docker image
+        run: |
           cd backend
           docker build -t us-west2-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest .
 
-      # Authenticate Docker
-      - run: gcloud auth configure-docker us-west2-docker.pkg.dev
+      - name: Authenticate Docker
+        run: gcloud auth configure-docker us-west2-docker.pkg.dev
 
-      # Push to Artifact Registry
-      - run: |
+      - name: Push to Artifact Registry
+        run: |
           docker push us-west2-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest
 
-      # Deploy to Cloud Run
-      - run: |
+      - name: Deploy to Cloud Run
+        run: |
           gcloud run deploy stock-screener-backend \
             --image us-west2-docker.pkg.dev/david-web-app-development/stock-screener/backend:latest \
             --region us-west2 \
