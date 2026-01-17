@@ -36,7 +36,11 @@ jobs:
 
       - name: Save environment variables
         run:
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > frontend/.env
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > frontend/.env.production
+
+      - name: Test environment variables
+        run:
+          cat frontend/.env.production
 
       - name: Build frontend
         run: |
