@@ -46,7 +46,7 @@ import TickerNameCell from "./TickerNameCell";
 
 import { importFromJson, exportToJson } from "../../utils/import";
 
-import API_BASE_URL from "../../services/api";
+import API_BASE_URL from "services/api";
 import { useIsMobile } from "../../hooks/MobileContext";
 
 interface TickerData {
@@ -127,7 +127,7 @@ export default function TickerTable() {
     const updatedTabs = tabs.map((tab) =>
       tab.index === tabIndex
         ? { ...tab, tickers: queryData.map((ticker: TickerData) => ticker.symbol) }
-        : tab
+        : tab,
     );
     setTabs(updatedTabs);
     mutation.mutate(updatedTabs);
@@ -234,13 +234,15 @@ export default function TickerTable() {
           alignItems: "center",
           width: "100%",
           px: 2,
-        }}>
+        }}
+      >
         <Stack
           direction="row"
           alignItems="center"
           justifyContent={"space-between"}
           spacing={2}
-          sx={{ flexGrow: 1, width: "100%", p: 1 }}>
+          sx={{ flexGrow: 1, width: "100%", p: 1 }}
+        >
           <Typography variant={isMobile ? "body1" : "h5"} sx={{ fontWeight: "bold" }}>
             Stock Screener
           </Typography>
@@ -264,18 +266,21 @@ export default function TickerTable() {
           overflow: "hidden",
           padding: 2,
           gap: 2,
-        }}>
+        }}
+      >
         <ButtonGroup
           variant="contained"
           orientation="horizontal"
-          sx={{ width: isMobile ? "100%" : "30rem" }}>
+          sx={{ width: isMobile ? "100%" : "30rem" }}
+        >
           {ranges.map((range) => (
             <Button
               key={range}
               color="success"
               variant={timeRange === range ? "contained" : "text"}
               onClick={() => setTimeRange(range)}
-              sx={{ flex: 1, px: 1 }}>
+              sx={{ flex: 1, px: 1 }}
+            >
               {range === "12M" ? "1Y" : range === "60M" ? "5Y" : range}
             </Button>
           ))}
@@ -294,7 +299,8 @@ export default function TickerTable() {
               "& .MuiTabs-scroller": {
                 overflowX: "auto !important",
               },
-            }}>
+            }}
+          >
             {tabs.map((tab) => (
               <Tab
                 key={tab.index}
@@ -309,12 +315,14 @@ export default function TickerTable() {
           <Box>
             <IconButton
               sx={{ width: "auto", height: "auto" }}
-              onClick={(event) => handlePopoverOpen(event, "add")}>
+              onClick={(event) => handlePopoverOpen(event, "add")}
+            >
               <BookmarkAddIcon />
             </IconButton>
             <IconButton
               sx={{ width: "auto", height: "auto" }}
-              onClick={(event) => handlePopoverOpen(event, "remove")}>
+              onClick={(event) => handlePopoverOpen(event, "remove")}
+            >
               <BookmarkRemoveIcon />
             </IconButton>
           </Box>
@@ -325,7 +333,8 @@ export default function TickerTable() {
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}>
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -334,7 +343,8 @@ export default function TickerTable() {
                 padding: 2,
                 width: "auto",
                 minWidth: tabOperation === "remove" ? 200 : "auto", // Ensure the box grows for the select
-              }}>
+              }}
+            >
               {tabOperation === "add" ? (
                 <>
                   <Typography sx={{ mb: 1 }}>Add Watchlist</Typography>
@@ -367,7 +377,8 @@ export default function TickerTable() {
                         handleDeleteTab(index);
                         setCurrentTabIndex(index - 1);
                         setTickerSymbols(tabs[index - 1]?.tickers || []); // Load tickers from the previous tab
-                      }}>
+                      }}
+                    >
                       {tabs.slice(1).length == 0 ? (
                         <MenuItem disabled>No tabs to remove</MenuItem>
                       ) : (
@@ -415,7 +426,8 @@ export default function TickerTable() {
                           top: "50%",
                           left: "50%",
                           transform: "translate(-50%, -50%)",
-                        }}></CircularProgress>
+                        }}
+                      ></CircularProgress>
                     </TableCell>
                   </TableRow>
                 )}
@@ -430,34 +442,34 @@ export default function TickerTable() {
                     const pegColor = scales.evaluateColorTier("PEG", row.trailingPegRatio);
                     const priceToSalesColor = scales.evaluateColorTier(
                       "P/S",
-                      row.priceToSalesTrailing12Months
+                      row.priceToSalesTrailing12Months,
                     );
                     const priceToBookColor = scales.evaluateColorTier("P/B", row.priceToBook);
                     const roeColor = scales.evaluateColorTier("ROE", percentageRoe);
                     const roaColor = scales.evaluateColorTier("ROA", percentageRoa);
                     const enterpriseToRevenueColor = scales.evaluateColorTier(
                       "EV/Revenue",
-                      row.enterpriseToRevenue
+                      row.enterpriseToRevenue,
                     );
                     const enterpriseToEbitdaColor = scales.evaluateColorTier(
                       "EV/EBITDA",
-                      row.enterpriseToEbitda
+                      row.enterpriseToEbitda,
                     );
                     const dividendYieldColor = scales.evaluateColorTier(
                       "Dividend Yield",
-                      percentageDividendYield
+                      percentageDividendYield,
                     );
                     const payoutRatioColor = scales.evaluateColorTier(
                       "Payout Ratio",
-                      percentagePayoutRatio
+                      percentagePayoutRatio,
                     );
                     const debtToEquityColor = scales.evaluateColorTier(
                       "Debt/Equity",
-                      row.debtToEquity
+                      row.debtToEquity,
                     );
                     const currentRatioColor = scales.evaluateColorTier(
                       "Current Ratio",
-                      row.currentRatio
+                      row.currentRatio,
                     );
                     const betaColor = scales.evaluateColorTier("Beta", row.beta);
 
@@ -466,7 +478,8 @@ export default function TickerTable() {
                         <TableCell
                           align="right"
                           size="small"
-                          sx={{ width: "4", padding: 0, pl: isMobile ? 0 : 1 }}>
+                          sx={{ width: "4", padding: 0, pl: isMobile ? 0 : 1 }}
+                        >
                           <IconButton color="error" onClick={() => handleDeleteRow(index)}>
                             <CloseIcon />
                           </IconButton>
@@ -475,7 +488,8 @@ export default function TickerTable() {
                           tickerName={row.shortName}
                           tickerSymbol={row.symbol}
                           tickerPrice={row.currentPrice}
-                          timeRange={timeRange}></TickerNameCell>
+                          timeRange={timeRange}
+                        ></TickerNameCell>
                         <ColorCodedCell value={row.trailingPE} color={peColor} />
                         <ColorCodedCell value={row.trailingPegRatio} color={pegColor} />
                         <ColorCodedCell
@@ -534,12 +548,14 @@ export default function TickerTable() {
           <ButtonGroup
             variant="text"
             orientation="horizontal"
-            sx={{ borderColor: "#ccc", borderRadius: 1 }}>
+            sx={{ borderColor: "#ccc", borderRadius: 1 }}
+          >
             <Button
               onClick={() => {
                 const input = document.getElementById("import-json-input") as HTMLInputElement;
                 if (input) input.click();
-              }}>
+              }}
+            >
               <FileDownloadIcon sx={{ mr: 1 }} />
               Import
             </Button>
