@@ -45,6 +45,7 @@ jobs:
       - name: Build frontend
         run: |
           cd frontend
+          rm -rf dist
           pnpm install --frozen-lockfile
           pnpm run build
 
