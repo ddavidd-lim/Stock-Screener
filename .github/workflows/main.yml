@@ -34,9 +34,11 @@ jobs:
         with:
           version: 9
 
+      - name: Save environment variables
+        run:
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > frontend/.env
+
       - name: Build frontend
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: |
           cd frontend
           pnpm install --frozen-lockfile
