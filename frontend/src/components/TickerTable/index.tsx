@@ -46,7 +46,7 @@ import TickerNameCell from "./TickerNameCell";
 
 import { importFromJson, exportToJson } from "../../utils/import";
 
-import API_BASE_URL from "services/api";
+import API_BASE_URL from "../../services/api";
 import { useIsMobile } from "../../hooks/MobileContext";
 
 interface TickerData {
