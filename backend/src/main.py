@@ -18,12 +18,12 @@ app.add_middleware(
 )
 
 
-@app.get("/health")
+@app.get("/api/health")
 async def health_check(request: Request):
     return "OK"
 
 
-@app.get("/stock")
+@app.get("/api/stock")
 async def ticker(request: Request):
     print("/stock")
     tickers_param = request.query_params.get("tickers", "NVDA")
